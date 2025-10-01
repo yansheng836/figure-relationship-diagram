@@ -1,0 +1,17 @@
+# 日志文件
+*.log
+temp/
+temp.md
+*.backup.*
+
+# office temp
+~$*.docx
+~$*.xlsx
+~$*.ppt
+
+*.tar.gz
+
+* - 副本*
+*.bak
+
+#toc.md
