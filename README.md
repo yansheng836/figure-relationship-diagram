@@ -2,6 +2,26 @@
 
 人物关系图
 
+## 简介
+
+用了 [D3.js](https://github.com/d3/d3) 工具，参考了这个项目：https://github.com/aelooee/red-dream-network-Tr，效果：https://aelooee.github.io/red-dream-network-Tr/，但是这里用的是**力导向布局**，不是我想要的效果，然后就用**智谱清言**生成了一个，并不断优化。
+
+### 优化效果和bug
+
+index.html：基本框架（图+搜索功能）
+
+index2.html：搜索功能优化
+
+index3.html：基本框架
+
+index_fixed1-示例数据.html：**修复**手机端适配问题，手机端添加侧边栏
+
+index_fixed2-真实数据.html：添加较多层级数据，**bug**：受限于画布大小，节点之间会层叠。
+
+index_fixed3-优化.html：**修复**节点层叠问题
+
+
+
 ## GitHub Page HTML访问路径
 
 参考实例：
