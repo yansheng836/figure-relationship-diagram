@@ -8,19 +8,19 @@
 
 ### 优化效果和bug
 
-index.html：基本框架（图+搜索功能）
+index.html：基本框架（图+搜索功能）。
 
-index2.html：搜索功能优化
+index2.html：搜索功能优化。
 
-index3.html：基本框架
+index3.html：基本框架。
 
-index_fixed1-示例数据.html：**修复**手机端适配问题，手机端添加侧边栏
+index_fixed1-示例数据.html：**修复**手机端适配问题，手机端添加侧边栏。
 
 index_fixed2-真实数据.html：添加较多层级数据，**bug**：受限于画布大小，节点之间会层叠。
 
-index_fixed3-优化.html：**修复**节点层叠问题
+index_fixed3-优化层叠.html：**修复**节点层叠问题。
 
-
+index_fixed4-改成水平分布：改成水平分布；手机端减小搜索栏大小；添加滚动条。
 
 ## GitHub Page HTML访问路径
 
@@ -41,5 +41,7 @@ index_fixed1-示例数据.html: <https://yansheng836.github.io/figure-relationsh
 
 index_fixed2-真实数据.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed2-真实数据.html>
 
-index_fixed3-优化.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed3-优化.html>
+index_fixed3-优化层叠.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed3-优化层叠.html>
+
+index_fixed4-改成水平分布.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed4-改成水平分布.html>
 
