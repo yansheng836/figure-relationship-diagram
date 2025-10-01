@@ -20,7 +20,9 @@ index_fixed2-真实数据.html：添加较多层级数据，**bug**：受限于�
 
 index_fixed3-优化层叠.html：**修复**节点层叠问题。
 
-index_fixed4-改成水平分布：改成水平分布；手机端减小搜索栏大小；添加滚动条。
+index_fixed4-改成水平分布.html：改成水平分布；手机端减小搜索栏大小；添加滚动条。
+
+index_fixed4-改成水平分布-优化布局.html：调整节点之间的距离、连线长度；搜索后命中节点；手机端，搜索命中后隐藏侧边栏。
 
 ## GitHub Page HTML访问路径
 
@@ -42,6 +44,8 @@ index_fixed1-示例数据.html: <https://yansheng836.github.io/figure-relationsh
 index_fixed2-真实数据.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed2-真实数据.html>
 
 index_fixed3-优化层叠.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed3-优化层叠.html>
+
+index_fixed4-改成水平分布-优化布局.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed4-改成水平分布-优化布局.html>
 
 index_fixed4-改成水平分布.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed4-改成水平分布.html>
 
