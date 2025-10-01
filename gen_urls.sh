@@ -10,7 +10,7 @@ do
     if [ -n "$str" ]; then
         str="$str\n"
     fi
-    str="$str$i: <https://yansheng836.github.io/figure-relationship-diagram/$i>"
+    str="$str$i: <https://yansheng836.github.io/figure-relationship-diagram/$i>\n"
 done
 
 # 定义标志模式
