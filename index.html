@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家族关系图谱 - 交互式可视化</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 搜索框样式 */
+        .search-container {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+
+        .search-results {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-result-item:hover {
+            background: #f5f5f5;
+        }
+
+        .search-result-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 控制面板 */
+        .controls {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .control-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* 统计信息 */
+        .stats {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* 主画布区域 */
+        .main-content {
+            flex: 1;
+            position: relative;
+            background: white;
+            margin: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        #family-tree {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SVG 样式 */
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            stroke-width: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover circle {
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+        }
+
+        .node text {
+            font-size: 12px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .link.highlighted {
+            stroke: #667eea;
+            stroke-width: 3px;
+            opacity: 1;
+        }
+
+        /* 提示框 */
+        .tooltip {
+            position: absolute;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .tooltip-info {
+            line-height: 1.5;
+        }
+
+        /* 图例 */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                z-index: 20;
+                background: white;
+                border: none;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <path d="M20 8v6M23 11h-6"></path>
+                    </svg>
+                    家族关系图谱
+                </h1>
+                <p>探索家族成员之间的关系网络</p>
+            </div>
+
+            <!-- 搜索功能 -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索家族成员...">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="controls">
+                <div class="control-section">
+                    <h3>视图控制</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" id="zoomInBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                                <line x1="11" y1="8" x2="11" y2="14"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                            放大
+                        </button>
+                        <button class="control-btn" id="zoomOutBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                            缩小
+                        </button>
+                        <button class="control-btn" id="resetBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            重置
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>布局选项</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn active" data-layout="tree">树形布局</button>
+                        <button class="control-btn" data-layout="radial">径向布局</button>
+                        <button class="control-btn" data-layout="force">力导向布局</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>显示选项</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn active" id="showLabelsBtn">显示标签</button>
+                        <button class="control-btn active" id="showImagesBtn">显示照片</button>
+                        <button class="control-btn" id="animateBtn">动画效果</button>
+                    </div>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <span>家族成员总数</span>
+                        <span class="stat-value" id="totalMembers">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>代际数量</span>
+                        <span class="stat-value" id="generations">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>家庭数量</span>
+                        <span class="stat-value" id="families">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div id="family-tree"></div>
+            
+            <!-- 图例 -->
+            <div class="legend">
+                <div class="legend-title">图例说明</div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span>男性</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #E91E63;"></div>
+                    <span>女性</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span>当前选中</span>
+                </div>
+            </div>
+
+            <!-- 提示框 -->
+            <div class="tooltip" id="tooltip">
+                <div class="tooltip-title"></div>
+                <div class="tooltip-info"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 家族数据结构
+        const familyData = {
+            nodes: [
+                // 第一代
+                { id: 1, name: "张国强", gender: "male", generation: 1, birth: "1920", death: "1995", occupation: "企业家", avatar: "👴" },
+                { id: 2, name: "李秀英", gender: "female", generation: 1, birth: "1925", death: "2000", occupation: "教师", avatar: "👵" },
+                
+                // 第二代
+                { id: 3, name: "张建国", gender: "male", generation: 2, birth: "1950", occupation: "工程师", avatar: "👨", parents: [1, 2] },
+                { id: 4, name: "王丽华", gender: "female", generation: 2, birth: "1952", occupation: "医生", avatar: "👩", spouse: 3 },
+                { id: 5, name: "张建华", gender: "male", generation: 2, birth: "1953", occupation: "律师", avatar: "👨", parents: [1, 2] },
+                { id: 6, name: "赵美玲", gender: "female", generation: 2, birth: "1955", occupation: "会计", avatar: "👩", spouse: 5 },
+                { id: 7, name: "张建民", gender: "male", generation: 2, birth: "1957", occupation: "教授", avatar: "👨", parents: [1, 2] },
+                { id: 8, name: "陈小芳", gender: "female", generation: 2, birth: "1958", occupation: "护士", avatar: "👩", spouse: 7 },
+                
+                // 第三代
+                { id: 9, name: "张小明", gender: "male", generation: 3, birth: "1978", occupation: "软件工程师", avatar: "👦", parents: [3, 4] },
+                { id: 10, name: "张小红", gender: "female", generation: 3, birth: "1980", occupation: "设计师", avatar: "👧", parents: [3, 4] },
+                { id: 11, name: "张小军", gender: "male", generation: 3, birth: "1982", occupation: "金融分析师", avatar: "👦", parents: [5, 6] },
+                { id: 12, name: "张小丽", gender: "female", generation: 3, birth: "1984", occupation: "市场经理", avatar: "👧", parents: [5, 6] },
+                { id: 13, name: "张小伟", gender: "male", generation: 3, birth: "1985", occupation: "创业者", avatar: "👦", parents: [7, 8] },
+                { id: 14, name: "张小芳", gender: "female", generation: 3, birth: "1987", occupation: "记者", avatar: "👧", parents: [7, 8] },
+                
+                // 第四代
+                { id: 15, name: "张天天", gender: "male", generation: 4, birth: "2005", occupation: "学生", avatar: "👶", parents: [9] },
+                { id: 16, name: "张乐乐", gender: "female", generation: 4, birth: "2008", occupation: "学生", avatar: "👶", parents: [9] },
+                { id: 17, name: "张思思", gender: "female", generation: 4, birth: "2010", occupation: "学生", avatar: "👶", parents: [11] },
+                { id: 18, name: "张明明", gender: "male", generation: 4, birth: "2012", occupation: "学生", avatar: "👶", parents: [13] }
+            ],
+            links: [
+                // 配偶关系
+                { source: 1, target: 2, type: "spouse" },
+                { source: 3, target: 4, type: "spouse" },
+                { source: 5, target: 6, type: "spouse" },
+                { source: 7, target: 8, type: "spouse" },
+                
+                // 父子关系
+                { source: 1, target: 3, type: "parent" },
+                { source: 2, target: 3, type: "parent" },
+                { source: 1, target: 5, type: "parent" },
+                { source: 2, target: 5, type: "parent" },
+                { source: 1, target: 7, type: "parent" },
+                { source: 2, target: 7, type: "parent" },
+                
+                { source: 3, target: 9, type: "parent" },
+                { source: 4, target: 9, type: "parent" },
+                { source: 3, target: 10, type: "parent" },
+                { source: 4, target: 10, type: "parent" },
+                
+                { source: 5, target: 11, type: "parent" },
+                { source: 6, target: 11, type: "parent" },
+                { source: 5, target: 12, type: "parent" },
+                { source: 6, target: 12, type: "parent" },
+                
+                { source: 7, target: 13, type: "parent" },
+                { source: 8, target: 13, type: "parent" },
+                { source: 7, target: 14, type: "parent" },
+                { source: 8, target: 14, type: "parent" },
+                
+                { source: 9, target: 15, type: "parent" },
+                { source: 9, target: 16, type: "parent" },
+                { source: 11, target: 17, type: "parent" },
+                { source: 13, target: 18, type: "parent" }
+            ]
+        };
+
+        // 全局变量
+        let svg, g, simulation, currentLayout = 'tree';
+        let selectedNode = null;
+        let showLabels = true;
+        let showImages = true;
+        let animate = false;
+
+        // 初始化应用
+        function initApp() {
+            setupSVG();
+            renderTree();
+            setupEventListeners();
+            updateStats();
+        }
+
+        // 设置SVG画布
+        function setupSVG() {
+            const container = document.getElementById('family-tree');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            svg = d3.select('#family-tree')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // 添加缩放功能
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', (event) => {
+                    g.attr('transform', event.transform);
+                });
+
+            svg.call(zoom);
+
+            g = svg.append('g')
+                .attr('transform', `translate(${width / 2}, ${height / 2})`);
+        }
+
+        // 渲染树形布局
+        function renderTree() {
+            // 清除现有内容
+            g.selectAll('*').remove();
+
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+
+            // 创建层次结构
+            const hierarchyData = createHierarchy();
+            const root = d3.hierarchy(hierarchyData);
+            
+            // 创建树布局
+            const treeLayout = d3.tree()
+                .size([width - 200, height - 200]);
+
+            treeLayout(root);
+
+            // 绘制连线
+            const links = g.selectAll('.link')
+                .data(root.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkVertical()
+                    .x(d => d.x - width / 2 + 100)
+                    .y(d => d.y - height / 2 + 100));
+
+            // 绘制节点
+            const nodes = g.selectAll('.node')
+                .data(root.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `translate(${d.x - width / 2 + 100}, ${d.y - height / 2 + 100})`)
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            // 添加节点圆圈
+            nodes.append('circle')
+                .attr('r', 25)
+                .attr('fill', d => getNodeColor(d.data))
+                .attr('stroke', '#fff');
+
+            // 添加头像/emoji
+            if (showImages) {
+                nodes.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '20px')
+                    .text(d => d.data.avatar);
+            }
+
+            // 添加标签
+            if (showLabels) {
+                nodes.append('text')
+                    .attr('dy', 40)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '12px')
+                    .style('font-weight', 'bold')
+                    .text(d => d.data.name);
+
+                nodes.append('text')
+                    .attr('dy', 55)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '10px')
+                    .style('fill', '#666')
+                    .text(d => d.data.occupation);
+            }
+
+            // 添加动画
+            if (animate) {
+                nodes.style('opacity', 0)
+                    .transition()
+                    .duration(800)
+                    .delay((d, i) => i * 50)
+                    .style('opacity', 1);
+
+                links.style('opacity', 0)
+                    .transition()
+                    .duration(800)
+                    .delay((d, i) => i * 50)
+                    .style('opacity', 0.6);
+            }
+        }
+
+        // 创建层次结构数据
+        function createHierarchy() {
+            // 找到根节点（第一代）
+            const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+            
+            // 构建层次结构
+            const buildChildren = (parentId) => {
+                const children = familyData.nodes.filter(n => 
+                    n.parents && n.parents.includes(parentId)
+                );
+                
+                return children.map(child => ({
+                    ...child,
+                    children: buildChildren(child.id)
+                }));
+            };
+
+            return {
+                name: rootNodes[0].name,
+                ...rootNodes[0],
+                children: buildChildren(rootNodes[0].id)
+            };
+        }
+
+        // 获取节点颜色
+        function getNodeColor(node) {
+            if (selectedNode && selectedNode.id === node.id) {
+                return '#FF9800';
+            }
+            return node.gender === 'male' ? '#4CAF50' : '#E91E63';
+        }
+
+        // 处理节点点击
+        function handleNodeClick(event, d) {
+            selectedNode = d.data;
+            renderTree();
+            highlightConnections(d.data);
+        }
+
+        // 处理节点悬停
+        function handleNodeHover(event, d) {
+            const tooltip = document.getElementById('tooltip');
+            const rect = event.target.getBoundingClientRect();
+            
+            tooltip.querySelector('.tooltip-title').textContent = d.data.name;
+            tooltip.querySelector('.tooltip-info').innerHTML = `
+                <div>出生年份: ${d.data.birth}</div>
+                ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
+                <div>职业: ${d.data.occupation}</div>
+                <div>第${d.data.generation}代</div>
+            `;
+            
+            tooltip.style.left = rect.left + rect.width / 2 + 'px';
+            tooltip.style.top = rect.top - 10 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 处理节点离开
+        function handleNodeLeave() {
+            document.getElementById('tooltip').classList.remove('show');
+        }
+
+        // 高亮连接
+        function highlightConnections(node) {
+            g.selectAll('.link')
+                .classed('highlighted', d => 
+                    d.source.id === node.id || d.target.id === node.id
+                );
+        }
+
+        // 搜索功能
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                
+                if (query.length === 0) {
+                    searchResults.classList.remove('active');
+                    return;
+                }
+
+                const matches = familyData.nodes.filter(node => 
+                    node.name.toLowerCase().includes(query)
+                );
+
+                if (matches.length > 0) {
+                    searchResults.innerHTML = matches.map(node => `
+                        <div class="search-result-item" data-id="${node.id}">
+                            <span>${node.avatar}</span>
+                            <div>
+                                <div>${node.name}</div>
+                                <small style="color: #999;">${node.occupation} · 第${node.generation}代</small>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    searchResults.classList.add('active');
+
+                    // 添加点击事件
+                    searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const nodeId = parseInt(item.dataset.id);
+                            const node = familyData.nodes.find(n => n.id === nodeId);
+                            selectedNode = node;
+                            renderTree();
+                            focusOnNode(node);
+                            searchResults.classList.remove('active');
+                            searchInput.value = '';
+                        });
+                    });
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">没有找到匹配的成员</div>';
+                    searchResults.classList.add('active');
+                }
+            });
+
+            // 点击外部关闭搜索结果
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    searchResults.classList.remove('active');
+                }
+            });
+        }
+
+        // 聚焦到节点
+        function focusOnNode(node) {
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+            
+            const transform = d3.zoomIdentity
+                .translate(width / 2, height / 2)
+                .scale(1.5);
+            
+            svg.transition()
+                .duration(750)
+                .call(d3.zoom().transform, transform);
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            setupSearch();
+
+            // 缩放控制
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                svg.transition().call(
+                    d3.zoom().scaleBy, 1.3
+                );
+            });
+
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                svg.transition().call(
+                    d3.zoom().scaleBy, 0.7
+                );
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                const width = document.getElementById('family-tree').clientWidth;
+                const height = document.getElementById('family-tree').clientHeight;
+                
+                svg.transition().duration(750).call(
+                    d3.zoom().transform,
+                    d3.zoomIdentity.translate(width / 2, height / 2)
+                );
+            });
+
+            // 布局切换
+            document.querySelectorAll('[data-layout]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-layout]').forEach(b => 
+                        b.classList.remove('active')
+                    );
+                    btn.classList.add('active');
+                    currentLayout = btn.dataset.layout;
+                    
+                    if (currentLayout === 'tree') {
+                        renderTree();
+                    } else if (currentLayout === 'radial') {
+                        renderRadial();
+                    } else if (currentLayout === 'force') {
+                        renderForce();
+                    }
+                });
+            });
+
+            // 显示选项
+            document.getElementById('showLabelsBtn').addEventListener('click', function() {
+                showLabels = !showLabels;
+                this.classList.toggle('active');
+                renderTree();
+            });
+
+            document.getElementById('showImagesBtn').addEventListener('click', function() {
+                showImages = !showImages;
+                this.classList.toggle('active');
+                renderTree();
+            });
+
+            document.getElementById('animateBtn').addEventListener('click', function() {
+                animate = !animate;
+                this.classList.toggle('active');
+                renderTree();
+            });
+        }
+
+        // 渲染径向布局
+        function renderRadial() {
+            g.selectAll('*').remove();
+            
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+            const radius = Math.min(width, height) / 2 - 100;
+
+            const hierarchyData = createHierarchy();
+            const root = d3.hierarchy(hierarchyData);
+            
+            const treeLayout = d3.tree()
+                .size([2 * Math.PI, radius])
+                .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+
+            treeLayout(root);
+
+            // 绘制连线
+            g.selectAll('.link')
+                .data(root.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkRadial()
+                    .angle(d => d.x)
+                    .radius(d => d.y));
+
+            // 绘制节点
+            const nodes = g.selectAll('.node')
+                .data(root.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `
+                    rotate(${d.x * 180 / Math.PI - 90})
+                    translate(${d.y}, 0)
+                `)
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            nodes.append('circle')
+                .attr('r', 20)
+                .attr('fill', d => getNodeColor(d.data))
+                .attr('stroke', '#fff');
+
+            if (showImages) {
+                nodes.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '16px')
+                    .text(d => d.data.avatar);
+            }
+
+            if (showLabels) {
+                nodes.append('text')
+                    .attr('dy', 35)
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', d => `rotate(${d.x * 180 / Math.PI - 90})`)
+                    .style('font-size', '10px')
+                    .text(d => d.data.name);
+            }
+        }
+
+        // 渲染力导向布局
+        function renderForce() {
+            g.selectAll('*').remove();
+            
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+
+            // 创建力导向模拟
+            simulation = d3.forceSimulation(familyData.nodes)
+                .force('link', d3.forceLink(familyData.links)
+                    .id(d => d.id)
+                    .distance(100))
+                .force('charge', d3.forceManyBody().strength(-300))
+                .force('center', d3.forceCenter(0, 0))
+                .force('collision', d3.forceCollide().radius(30));
+
+            // 绘制连线
+            const link = g.selectAll('.link')
+                .data(familyData.links)
+                .enter()
+                .append('line')
+                .attr('class', 'link')
+                .style('stroke', d => d.type === 'spouse' ? '#E91E63' : '#ccc')
+                .style('stroke-width', d => d.type === 'spouse' ? 3 : 2);
+
+            // 绘制节点
+            const node = g.selectAll('.node')
+                .data(familyData.nodes)
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended))
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            node.append('circle')
+                .attr('r', 25)
+                .attr('fill', d => getNodeColor(d))
+                .attr('stroke', '#fff');
+
+            if (showImages) {
+                node.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '20px')
+                    .text(d => d.avatar);
+            }
+
+            if (showLabels) {
+                node.append('text')
+                    .attr('dy', 40)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '12px')
+                    .text(d => d.name);
+            }
+
+            // 更新位置
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
+            });
+
+            // 拖拽函数
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('totalMembers').textContent = familyData.nodes.length;
+            
+            const generations = new Set(familyData.nodes.map(n => n.generation));
+            document.getElementById('generations').textContent = generations.size;
+            
+            const families = familyData.links.filter(l => l.type === 'spouse').length;
+            document.getElementById('families').textContent = families;
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // 响应窗口大小变化
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('family-tree');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            svg.attr('width', width).attr('height', height);
+            
+            if (currentLayout === 'tree') {
+                renderTree();
+            } else if (currentLayout === 'radial') {
+                renderRadial();
+            } else if (currentLayout === 'force') {
+                renderForce();
+            }
+        });
+    </script>
+</body>
+</html>
