@@ -1,0 +1,2707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家族关系图谱 - 交互式可视化</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 搜索框样式 */
+        .search-container {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+
+        .search-results {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-result-item:hover {
+            background: #f5f5f5;
+        }
+
+        .search-result-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 控制面板 */
+        .controls {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .control-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* 统计信息 */
+        .stats {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* 主画布区域 */
+        .main-content {
+            flex: 1;
+            position: relative;/* 关键！为绝对定位的tooltip提供参考 */
+            background: white;
+            margin: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            /*overflow: hidden;*/
+            /* 修改overflow属性 */
+            /*overflow-y: auto;*/
+            overflow-x: auto; /* 允许水平滚动 */
+            overflow-y: hidden; /* 禁用垂直滚动 */
+        }
+
+        #family-tree {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SVG 样式 */
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            stroke-width: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover circle {
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+        }
+
+        .node text {
+            font-size: 12px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .link.highlighted {
+            stroke: #667eea;
+            stroke-width: 3px;
+            opacity: 1;
+        }
+
+        /* 提示框 */
+        .tooltip {
+            position: absolute;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 250px;
+        }
+        /* 在CSS中添加箭头样式 */
+.tooltip {
+    position: absolute;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+    max-width: 250px;
+}
+
+/* 添加箭头 */
+.tooltip::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+/* 默认箭头在左侧 */
+.tooltip::after {
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 8px 8px 8px 0;
+    border-color: transparent rgba(0, 0, 0, 0.9) transparent transparent;
+}
+
+/* 当箭头在右侧时的样式 */
+.tooltip.arrow-right::after {
+    left: auto;
+    right: -8px;
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
+}
+
+/* 当箭头在上方时的样式 */
+.tooltip.arrow-top::after {
+    left: 50%;
+    top: auto;
+    bottom: -8px;
+    transform: translateX(-50%);
+    border-width: 0 8px 8px 8px;
+    border-color: transparent transparent rgba(0, 0, 0, 0.9) transparent;
+}
+
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .tooltip-info {
+            line-height: 1.5;
+        }
+
+        /* 图例 */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 菜单切换按钮 */
+        .menu-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 50%;
+                position: absolute;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin: 10px;
+            }
+            
+            svg {
+                width: 370;
+                height: 80%;
+            }
+            
+            .container {
+                display: flex;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <path d="M20 8v6M23 11h-6"></path>
+                    </svg>
+                    家族关系图谱
+                </h1>
+                <p>探索家族成员之间的关系网络</p>
+            </div>
+
+            <!-- 搜索功能 -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索家族成员...">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="controls">
+                <div class="control-section">
+                    <h3>视图控制</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" id="zoomInBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                                <line x1="11" y1="8" x2="11" y2="14"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                            放大
+                        </button>
+                        <button class="control-btn" id="zoomOutBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                            缩小
+                        </button>
+                        <button class="control-btn" id="resetBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            重置
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>布局选项</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn active" data-layout="tree">树形布局</button>
+                        <button class="control-btn" data-layout="radial">径向布局</button>
+                        <button class="control-btn" data-layout="force">力导向布局</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>显示选项</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn active" id="showLabelsBtn">显示标签</button>
+                        <button class="control-btn active" id="showImagesBtn">显示照片</button>
+                        <button class="control-btn" id="animateBtn">动画效果</button>
+                    </div>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <span>家族成员总数</span>
+                        <span class="stat-value" id="totalMembers">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>代际数量</span>
+                        <span class="stat-value" id="generations">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>家庭数量</span>
+                        <span class="stat-value" id="families">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 菜单切换按钮 -->
+            <button class="menu-toggle" id="menuToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div id="family-tree"></div>
+            
+            <!-- 图例 -->
+            <div class="legend">
+                <div class="legend-title">图例说明</div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span>男性</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #E91E63;"></div>
+                    <span>女性</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span>当前选中</span>
+                </div>
+            </div>
+
+            <!-- 提示框 -->
+            <div class="tooltip" id="tooltip">
+                <div class="tooltip-title"></div>
+                <div class="tooltip-info"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 家族数据结构
+        const familyData = {
+  "nodes": [
+    {
+      "id": 1,
+      "name": "颜回",
+      "gender": "male",
+      "generation": 1,
+      "birth": "前521年",
+      "death": "前481年",
+      "occupation": "",
+      "avatar": ""
+    },
+    {
+      "id": 2,
+      "name": "颜歆",
+      "gender": "male",
+      "generation": 2,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "颜俭jiǎn",
+      "gender": "male",
+      "generation": 3,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "name": "颜威",
+      "gender": "male",
+      "generation": 4,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        3
+      ]
+    },
+    {
+      "id": 5,
+      "name": "颜芃péng",
+      "gender": "male",
+      "generation": 5,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        4
+      ]
+    },
+    {
+      "id": 6,
+      "name": "颜亿",
+      "gender": "male",
+      "generation": 6,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        5
+      ]
+    },
+    {
+      "id": 7,
+      "name": "颜岵hù",
+      "gender": "male",
+      "generation": 7,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        6
+      ]
+    },
+    {
+      "id": 8,
+      "name": "颜卸",
+      "gender": "male",
+      "generation": 8,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        7
+      ]
+    },
+    {
+      "id": 9,
+      "name": "颜誉",
+      "gender": "male",
+      "generation": 9,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        8
+      ]
+    },
+    {
+      "id": 10,
+      "name": "颜产",
+      "gender": "male",
+      "generation": 10,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        9
+      ]
+    },
+    {
+      "id": 11,
+      "name": "颜异",
+      "gender": "male",
+      "generation": 11,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        10
+      ]
+    },
+    {
+      "id": 12,
+      "name": "颜愚",
+      "gender": "male",
+      "generation": 12,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        11
+      ]
+    },
+    {
+      "id": 13,
+      "name": "颜逵kuí",
+      "gender": "male",
+      "generation": 13,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        12
+      ]
+    },
+    {
+      "id": 14,
+      "name": "颜驷sì",
+      "gender": "male",
+      "generation": 14,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        13
+      ]
+    },
+    {
+      "id": 15,
+      "name": "颜衷",
+      "gender": "male",
+      "generation": 15,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        14
+      ]
+    },
+    {
+      "id": 16,
+      "name": "颜凯",
+      "gender": "male",
+      "generation": 16,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        15
+      ]
+    },
+    {
+      "id": 17,
+      "name": "颜邃suì",
+      "gender": "male",
+      "generation": 17,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        16
+      ]
+    },
+    {
+      "id": 18,
+      "name": "颜龠yuè",
+      "gender": "male",
+      "generation": 18,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        17
+      ]
+    },
+    {
+      "id": 19,
+      "name": "颜绰chuò",
+      "gender": "male",
+      "generation": 19,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        18
+      ]
+    },
+    {
+      "id": 20,
+      "name": "颜准",
+      "gender": "male",
+      "generation": 20,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        19
+      ]
+    },
+    {
+      "id": 21,
+      "name": "颜阮",
+      "gender": "male",
+      "generation": 21,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        20
+      ]
+    },
+    {
+      "id": 22,
+      "name": "颜亮",
+      "gender": "male",
+      "generation": 22,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        21
+      ]
+    },
+    {
+      "id": 23,
+      "name": "颜敫jiǎo",
+      "gender": "male",
+      "generation": 23,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        22
+      ]
+    },
+    {
+      "id": 24,
+      "name": "颜斐",
+      "gender": "male",
+      "generation": 24,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        23
+      ]
+    },
+    {
+      "id": 25,
+      "name": "颜鲁",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        24
+      ]
+    },
+    {
+      "id": 26,
+      "name": "颜欢",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        24
+      ]
+    },
+    {
+      "id": 27,
+      "name": "颜盛",
+      "gender": "male",
+      "generation": 24,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        23
+      ]
+    },
+    {
+      "id": 28,
+      "name": "颜钦",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        27
+      ]
+    },
+    {
+      "id": 29,
+      "name": "颜默",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 30,
+      "name": "颜畿jī",
+      "gender": "male",
+      "generation": 27,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        29
+      ]
+    },
+    {
+      "id": 31,
+      "name": "颜辇niǎn",
+      "gender": "male",
+      "generation": 27,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        29
+      ]
+    },
+    {
+      "id": 32,
+      "name": "颜含",
+      "gender": "male",
+      "generation": 27,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        29
+      ]
+    },
+    {
+      "id": 33,
+      "name": "颜髦máo",
+      "gender": "male",
+      "generation": 28,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        32
+      ]
+    },
+    {
+      "id": 34,
+      "name": "颜綝lín",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 35,
+      "name": "颜靖之",
+      "gender": "male",
+      "generation": 30,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        34
+      ]
+    },
+    {
+      "id": 36,
+      "name": "颜腾之",
+      "gender": "male",
+      "generation": 31,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        35
+      ]
+    },
+    {
+      "id": 37,
+      "name": "颜兴之",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        36
+      ]
+    },
+    {
+      "id": 38,
+      "name": "颜登",
+      "gender": "male",
+      "generation": 33,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        37
+      ]
+    },
+    {
+      "id": 39,
+      "name": "颜炳之",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        36
+      ]
+    },
+    {
+      "id": 40,
+      "name": "颜见远",
+      "gender": "male",
+      "generation": 33,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        39
+      ]
+    },
+    {
+      "id": 41,
+      "name": "颜协",
+      "gender": "male",
+      "generation": 34,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        40
+      ]
+    },
+    {
+      "id": 42,
+      "name": "颜之仪",
+      "gender": "male",
+      "generation": 35,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        41
+      ]
+    },
+    {
+      "id": 43,
+      "name": "颜冠",
+      "gender": "male",
+      "generation": 36,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        42
+      ]
+    },
+    {
+      "id": 44,
+      "name": "颜昶",
+      "gender": "male",
+      "generation": 36,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        42
+      ]
+    },
+    {
+      "id": 45,
+      "name": "颜万石",
+      "gender": "male",
+      "generation": 37,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        44
+      ]
+    },
+    {
+      "id": 46,
+      "name": "颜之奇",
+      "gender": "male",
+      "generation": 35,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        41
+      ]
+    },
+    {
+      "id": 47,
+      "name": "颜之推：撰写《颜氏家训》，开后世“家训”的先河",
+      "gender": "male",
+      "generation": 35,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        41
+      ]
+    },
+    {
+      "id": 48,
+      "name": "颜思鲁",
+      "gender": "male",
+      "generation": 36,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        47
+      ]
+    },
+    {
+      "id": 49,
+      "name": "颜愍mǐn楚",
+      "gender": "male",
+      "generation": 36,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        47
+      ]
+    },
+    {
+      "id": 50,
+      "name": "颜游秦",
+      "gender": "male",
+      "generation": 36,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        47
+      ]
+    },
+    {
+      "id": 51,
+      "name": "颜之善",
+      "gender": "male",
+      "generation": 35,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        41
+      ]
+    },
+    {
+      "id": 52,
+      "name": "颜宣仁",
+      "gender": "male",
+      "generation": 33,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        39
+      ]
+    },
+    {
+      "id": 53,
+      "name": "颜泰之",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        36
+      ]
+    },
+    {
+      "id": 54,
+      "name": "颜吾昌",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        36
+      ]
+    },
+    {
+      "id": 55,
+      "name": "颜思遄chuán",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        36
+      ]
+    },
+    {
+      "id": 56,
+      "name": "颜遵之",
+      "gender": "male",
+      "generation": 31,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        35
+      ]
+    },
+    {
+      "id": 57,
+      "name": "颜恭之",
+      "gender": "male",
+      "generation": 31,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        35
+      ]
+    },
+    {
+      "id": 58,
+      "name": "颜秉之",
+      "gender": "male",
+      "generation": 30,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        34
+      ]
+    },
+    {
+      "id": 59,
+      "name": "颜纶",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 60,
+      "name": "颜矫",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 61,
+      "name": "颜朗",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 62,
+      "name": "颜畅",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 63,
+      "name": "颜绍",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        33
+      ]
+    },
+    {
+      "id": 64,
+      "name": "颜谦",
+      "gender": "male",
+      "generation": 28,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        32
+      ]
+    },
+    {
+      "id": 65,
+      "name": "颜约",
+      "gender": "male",
+      "generation": 28,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        32
+      ]
+    },
+    {
+      "id": 66,
+      "name": "颜显",
+      "gender": "male",
+      "generation": 29,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        65
+      ]
+    },
+    {
+      "id": 67,
+      "name": "颜延之",
+      "gender": "male",
+      "generation": 30,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        66
+      ]
+    },
+    {
+      "id": 68,
+      "name": "颜竣",
+      "gender": "male",
+      "generation": 31,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        67
+      ]
+    },
+    {
+      "id": 69,
+      "name": "颜辟强",
+      "gender": "male",
+      "generation": 32,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        68
+      ]
+    },
+    {
+      "id": 70,
+      "name": "颜测",
+      "gender": "male",
+      "generation": 31,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        67
+      ]
+    },
+    {
+      "id": 71,
+      "name": "颜平",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 72,
+      "name": "颜协",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 73,
+      "name": "颜雅",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 74,
+      "name": "颜闵",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 75,
+      "name": "颜永",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 76,
+      "name": "颜考",
+      "gender": "male",
+      "generation": 26,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        28
+      ]
+    },
+    {
+      "id": 77,
+      "name": "颜曾",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        27
+      ]
+    },
+    {
+      "id": 78,
+      "name": "颜兴",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        27
+      ]
+    },
+    {
+      "id": 79,
+      "name": "颜士光",
+      "gender": "male",
+      "generation": 25,
+      "birth": "",
+      "death": "",
+      "occupation": "",
+      "avatar": "",
+      "parents": [
+        27
+      ]
+    }
+  ],
+  "links": [
+    {
+      "source": 1,
+      "target": 2,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "type": "parent"
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "type": "parent"
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "type": "parent"
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "type": "parent"
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "type": "parent"
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "type": "parent"
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "type": "parent"
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "type": "parent"
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "type": "parent"
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "type": "parent"
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "type": "parent"
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "type": "parent"
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "type": "parent"
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "type": "parent"
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "type": "parent"
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "type": "parent"
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "type": "parent"
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "type": "parent"
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "type": "parent"
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "type": "parent"
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "type": "parent"
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "type": "parent"
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "type": "parent"
+    },
+    {
+      "source": 24,
+      "target": 26,
+      "type": "parent"
+    },
+    {
+      "source": 23,
+      "target": 27,
+      "type": "parent"
+    },
+    {
+      "source": 27,
+      "target": 28,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "type": "parent"
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "type": "parent"
+    },
+    {
+      "source": 29,
+      "target": 31,
+      "type": "parent"
+    },
+    {
+      "source": 29,
+      "target": 32,
+      "type": "parent"
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 34,
+      "type": "parent"
+    },
+    {
+      "source": 34,
+      "target": 35,
+      "type": "parent"
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "type": "parent"
+    },
+    {
+      "source": 36,
+      "target": 37,
+      "type": "parent"
+    },
+    {
+      "source": 37,
+      "target": 38,
+      "type": "parent"
+    },
+    {
+      "source": 36,
+      "target": 39,
+      "type": "parent"
+    },
+    {
+      "source": 39,
+      "target": 40,
+      "type": "parent"
+    },
+    {
+      "source": 40,
+      "target": 41,
+      "type": "parent"
+    },
+    {
+      "source": 41,
+      "target": 42,
+      "type": "parent"
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "type": "parent"
+    },
+    {
+      "source": 42,
+      "target": 44,
+      "type": "parent"
+    },
+    {
+      "source": 44,
+      "target": 45,
+      "type": "parent"
+    },
+    {
+      "source": 41,
+      "target": 46,
+      "type": "parent"
+    },
+    {
+      "source": 41,
+      "target": 47,
+      "type": "parent"
+    },
+    {
+      "source": 47,
+      "target": 48,
+      "type": "parent"
+    },
+    {
+      "source": 47,
+      "target": 49,
+      "type": "parent"
+    },
+    {
+      "source": 47,
+      "target": 50,
+      "type": "parent"
+    },
+    {
+      "source": 41,
+      "target": 51,
+      "type": "parent"
+    },
+    {
+      "source": 39,
+      "target": 52,
+      "type": "parent"
+    },
+    {
+      "source": 36,
+      "target": 53,
+      "type": "parent"
+    },
+    {
+      "source": 36,
+      "target": 54,
+      "type": "parent"
+    },
+    {
+      "source": 36,
+      "target": 55,
+      "type": "parent"
+    },
+    {
+      "source": 35,
+      "target": 56,
+      "type": "parent"
+    },
+    {
+      "source": 35,
+      "target": 57,
+      "type": "parent"
+    },
+    {
+      "source": 34,
+      "target": 58,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 59,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 60,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 61,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 62,
+      "type": "parent"
+    },
+    {
+      "source": 33,
+      "target": 63,
+      "type": "parent"
+    },
+    {
+      "source": 32,
+      "target": 64,
+      "type": "parent"
+    },
+    {
+      "source": 32,
+      "target": 65,
+      "type": "parent"
+    },
+    {
+      "source": 65,
+      "target": 66,
+      "type": "parent"
+    },
+    {
+      "source": 66,
+      "target": 67,
+      "type": "parent"
+    },
+    {
+      "source": 67,
+      "target": 68,
+      "type": "parent"
+    },
+    {
+      "source": 68,
+      "target": 69,
+      "type": "parent"
+    },
+    {
+      "source": 67,
+      "target": 70,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 71,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 72,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 73,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 74,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 75,
+      "type": "parent"
+    },
+    {
+      "source": 28,
+      "target": 76,
+      "type": "parent"
+    },
+    {
+      "source": 27,
+      "target": 77,
+      "type": "parent"
+    },
+    {
+      "source": 27,
+      "target": 78,
+      "type": "parent"
+    },
+    {
+      "source": 27,
+      "target": 79,
+      "type": "parent"
+    }
+  ]
+};
+
+        // 全局变量
+        let svg, g, simulation, currentLayout = 'tree';
+        let selectedNode = null;
+        let showLabels = true;
+        let showImages = true;
+        let animate = false;
+        let zoom; // 修复1：添加全局zoom变量
+
+        // 初始化应用
+        function initApp() {
+            setupSVG();
+            renderTree();
+            setupEventListeners();
+            updateStats();
+            
+            // 在全局变量区域添加
+            let defaultFocusNodeId = 1; // 设置默认聚焦的节点ID（例如颜之推）
+            // 设置初始焦点
+            const defaultNode = familyData.nodes.find(n => n.id === defaultFocusNodeId);
+            if (defaultNode) {
+                selectedNode = defaultNode;
+                // 延迟执行以确保渲染完成
+                setTimeout(() => {
+                    focusOnNode(defaultNode);
+                    highlightConnections(defaultNode);
+                }, 500);
+            }
+        }
+
+        // 设置SVG画布
+        function setupSVG() {
+            const container = document.getElementById('family-tree');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            svg = d3.select('#family-tree')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // 添加缩放功能
+            zoom = d3.zoom() // 修复1：保存zoom实例
+                .scaleExtent([0.1, 4])
+                .on('zoom', (event) => {
+                    g.attr('transform', event.transform);
+                });
+
+            svg.call(zoom);
+
+            g = svg.append('g')
+                .attr('transform', `translate(${width / 2}, ${height / 2})`);
+        }
+
+        // 渲染树形布局
+        function renderTree() {
+            g.selectAll('*').remove();
+
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+            
+            // 计算水平布局所需宽度：每代间距200px + 左右边距
+            const generations = [...new Set(familyData.nodes.map(n => n.generation))].length;
+            const layoutWidth = generations * 200 + 400;
+
+            // 创建层次结构
+            const hierarchyData = createHierarchy();
+            const root = d3.hierarchy(hierarchyData);
+            
+            // 创建水平树布局 - 宽度根据代际数量动态计算
+            const treeLayout = d3.tree()
+                .size([height - 100, layoutWidth]) // 注意：先高度后宽度
+                .nodeSize([50, 150]) // 节点大小：垂直50px，水平200px
+                .separation((a, b) => (a.parent == b.parent ? 1.4 : 1.4));// 堂兄弟间距稍大
+
+            treeLayout(root);
+            
+            // --- 这个逻辑块会在每次renderTree时执行 ---
+// --- 调试聚焦逻辑 ---
+    console.log("renderTree: selectedNode is", selectedNode); // 调试1: 检查selectedNode
+
+    // 在 renderTree() 函数中，找到这段代码并取消注释
+if (selectedNode) {
+    const targetDescendant = root.descendants().find(d => d.data.id === selectedNode.id);
+    
+    if (targetDescendant) {
+        const nodeX = targetDescendant.y - layoutWidth / 2 + 200;
+        const nodeY = targetDescendant.x - height / 2 + 50;
+
+        const targetTransform = d3.zoomIdentity
+            .translate(width / 2 - nodeX, height / 2 - nodeY)
+            .scale(1.0);
+
+        svg.transition()
+            .duration(750)
+            .call(zoom.transform, targetTransform);
+    }
+}
+
+    // --- 调试结束 ---
+    // --- 聚焦逻辑结束 ---
+
+            // 绘制水平连线
+            const links = g.selectAll('.link')
+                .data(root.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkHorizontal() // 使用水平链接生成器
+                    .x(d => d.y - layoutWidth / 2 + 200) // 交换x/y坐标
+                    .y(d => d.x - height / 2 + 50));
+
+            // 绘制节点
+            const nodes = g.selectAll('.node')
+                .data(root.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `translate(${d.y - layoutWidth / 2 + 200}, ${d.x - height / 2 + 50})`) // 交换坐标
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            // 添加节点圆圈
+            nodes.append('circle')
+                .attr('r', 25)
+                .attr('fill', d => getNodeColor(d.data))
+                .attr('stroke', '#fff');
+
+            // 添加头像/emoji
+            if (showImages) {
+                nodes.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '20px')
+                    .text(d => d.data.avatar);
+            }
+
+            // 添加标签 - 适应水平布局
+            if (showLabels) {
+                nodes.append('text')
+                    .attr('dy', 40)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '12px')
+                    .style('font-weight', 'bold')
+                    .text(d => d.data.name);
+
+                nodes.append('text')
+                    .attr('dy', 55)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '10px')
+                    .style('fill', '#666')
+                    .text(d => d.data.occupation);
+            }
+
+            // 添加动画
+            if (animate) {
+                nodes.style('opacity', 0)
+                    .transition()
+                    .duration(800)
+                    .delay((d, i) => i * 50)
+                    .style('opacity', 1);
+
+                links.style('opacity', 0)
+                    .transition()
+                    .duration(800)
+                    .delay((d, i) => i * 50)
+                    .style('opacity', 0.6);
+            }
+        }
+
+
+        // 创建层次结构数据
+        function createHierarchy() {
+            // 找到根节点（第一代）
+            const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+            
+            // 构建层次结构
+            const buildChildren = (parentId) => {
+                const children = familyData.nodes.filter(n => 
+                    n.parents && n.parents.includes(parentId)
+                );
+                
+                return children.map(child => ({
+                    ...child,
+                    children: buildChildren(child.id)
+                }));
+            };
+
+            return {
+                name: rootNodes[0].name,
+                ...rootNodes[0],
+                children: buildChildren(rootNodes[0].id)
+            };
+        }
+
+        // 获取节点颜色
+        function getNodeColor(node) {
+            if (selectedNode && selectedNode.id === node.id) {
+                return '#FF9800';
+            }
+            return node.gender === 'male' ? '#4CAF50' : '#E91E63';
+        }
+
+        // 处理节点点击
+        function handleNodeClick(event, d) {
+            selectedNode = d.data;
+            renderTree();
+            highlightConnections(d.data);
+        }
+
+// 处理节点悬停
+function handleNodeHover(event, d) {
+    const tooltip = document.getElementById('tooltip');
+    const mainContent = document.querySelector('.main-content');
+    const mainContentRect = mainContent.getBoundingClientRect();
+    
+    // 设置提示框内容
+    tooltip.querySelector('.tooltip-title').textContent = d.data.name;
+    tooltip.querySelector('.tooltip-info').innerHTML = `
+        <div>出生年份: ${d.data.birth || '未知'}</div>
+        ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
+        <div>职业: ${d.data.occupation || '未知'}</div>
+        <div>第${d.data.generation}代</div>
+    `;
+    
+    // 获取SVG元素及其变换矩阵
+    const svg = document.querySelector('#family-tree svg');
+    const svgRect = svg.getBoundingClientRect();
+    
+    // 获取节点组的transform属性
+    const nodeGroup = event.currentTarget;
+    const nodeTransform = d3.select(nodeGroup).attr('transform');
+    
+    // 解析节点的本地坐标
+    let localX = 0, localY = 0;
+    const match = nodeTransform.match(/translate\(([^,]+),([^)]+)\)/);
+    if (match) {
+        localX = parseFloat(match[1]);
+        localY = parseFloat(match[2]);
+    }
+    
+    // 获取主g元素的transform（包含缩放和平移）
+    const mainG = d3.select('#family-tree svg g');
+    const mainTransform = mainG.attr('transform') || '';
+    
+    // 解析transform矩阵，考虑缩放
+    let scale = 1, translateX = 0, translateY = 0;
+    
+    // 尝试解析matrix变换
+    const matrixMatch = mainTransform.match(/matrix\(([^)]+)\)/);
+    if (matrixMatch) {
+        const matrixValues = matrixMatch[1].split(',').map(parseFloat);
+        scale = matrixValues[0]; // 缩放因子
+        translateX = matrixValues[4]; // X平移
+        translateY = matrixValues[5]; // Y平移
+    } else {
+        // 尝试解析translate变换
+        const translateMatch = mainTransform.match(/translate\(([^,]+),([^)]+)\)/);
+        if (translateMatch) {
+            translateX = parseFloat(translateMatch[1]);
+            translateY = parseFloat(translateMatch[2]);
+        }
+    }
+    
+    // 计算节点在SVG中的实际坐标（考虑缩放）
+    const svgX = localX * scale + translateX;
+    const svgY = localY * scale + translateY;
+    
+    // 转换为相对于main-content的坐标
+    const nodeX = svgX + svgRect.left - mainContentRect.left;
+    const nodeY = svgY + svgRect.top - mainContentRect.top;
+    
+    // 节点半径（考虑缩放）
+    const nodeRadius = 25 * scale;
+    
+    // 计算提示框位置：从节点右边缘开始
+    let tooltipX = nodeX + nodeRadius + 10* scale;
+    let tooltipY =nodeY -nodeRadius -20* scale; // 稍微向上偏移，使提示框中心对齐节点中心
+    
+    // 先显示tooltip以获取其尺寸
+    tooltip.classList.add('show');
+    tooltip.style.opacity = '0';
+    const tooltipRect = tooltip.getBoundingClientRect();
+    tooltip.style.opacity = '';
+    
+    // 边界检测
+    const viewportWidth = mainContentRect.width;
+    const viewportHeight = mainContentRect.height;
+    
+    // 水平边界检测
+    if (tooltipX + tooltipRect.width > viewportWidth) {
+        // 如果右侧空间不足，显示在节点左侧
+        tooltipX = nodeX - nodeRadius - tooltipRect.width - 10;
+    }
+    
+    // 垂直边界检测
+    if (tooltipY + tooltipRect.height > viewportHeight) {
+        // 如果下方空间不足，显示在节点上方
+        tooltipY = nodeY - tooltipRect.height - 10;
+    }
+    
+    // 确保不会超出左边界
+    if (tooltipX < 10) {
+        tooltipX = 10;
+    }
+
+    // 确保不会超出顶部
+    if (tooltipY < 10) {
+        tooltipY = 10;
+    }
+    
+    // 设置最终位置
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+    
+    // 确保tooltip是可见的
+    tooltip.style.opacity = '1';
+    tooltip.classList.add('show');
+}
+
+
+        // 处理节点离开
+        function handleNodeLeave() {
+            document.getElementById('tooltip').classList.remove('show');
+        }
+
+        // 高亮连接
+        function highlightConnections(node) {
+            g.selectAll('.link')
+                .classed('highlighted', d => 
+                    d.source.id === node.id || d.target.id === node.id
+                );
+        }
+
+        // 搜索功能
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                
+                if (query.length === 0) {
+                    searchResults.classList.remove('active');
+                    return;
+                }
+
+                const matches = familyData.nodes.filter(node => 
+                    node.name.toLowerCase().includes(query)
+                );
+
+                if (matches.length > 0) {
+                    searchResults.innerHTML = matches.map(node => `
+                        <div class="search-result-item" data-id="${node.id}">
+                            <span>${node.avatar}</span>
+                            <div>
+                                <div>${node.name}</div>
+                                <small style="color: #999;">${node.occupation} · 第${node.generation}代</small>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    searchResults.classList.add('active');
+
+                    // 添加点击事件
+                    searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const nodeId = parseInt(item.dataset.id);
+                            const node = familyData.nodes.find(n => n.id === nodeId);
+                            selectedNode = node;
+                            // --- 关键修改 ---
+                            // 重新渲染树形布局，这会触发我们之前修改过的聚焦逻辑
+                            renderTree();
+                            // 点击后清理旧的提示框
+                            handleNodeLeave();
+                            // 命中节点
+                            focusOnNode(node);
+                            
+                            // --- 关键修改：在手机端时隐藏侧边栏 ---
+                            // 检查窗口宽度是否小于768px（即手机端）
+                            if (window.innerWidth < 768) {
+                                const sidebar = document.querySelector('.sidebar');
+                                if (sidebar) {
+                                    sidebar.classList.remove('open'); // 移除'open'类来隐藏侧边栏
+                                }
+                            }
+                            // --- 修改结束 ---
+                            // 不清空搜索内容
+                            // searchResults.classList.remove('active');
+                            // searchInput.value = '';
+                        });
+                    });
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">没有找到匹配的成员</div>';
+                    searchResults.classList.add('active');
+                }
+            });
+
+            // 点击外部关闭搜索结果
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    searchResults.classList.remove('active');
+                }
+            });
+        }
+
+        // 聚焦到节点
+// 聚焦到节点
+// 聚焦到节点
+function focusOnNode(node) {
+    if (!node) return;
+    
+    const width = document.getElementById('family-tree').clientWidth;
+    const height = document.getElementById('family-tree').clientHeight;
+    
+    // 获取当前布局信息
+    const generations = [...new Set(familyData.nodes.map(n => n.generation))].length;
+    const layoutWidth = generations * 200 + 400;
+    
+    // 创建层次结构来获取节点位置
+    const hierarchyData = createHierarchy();
+    const root = d3.hierarchy(hierarchyData);
+    const treeLayout = d3.tree()
+        .size([height - 100, layoutWidth])
+        .nodeSize([50, 150])
+        .separation((a, b) => (a.parent == b.parent ? 1.4 : 1.4));
+    
+    treeLayout(root);
+    
+    // 找到目标节点
+    const targetDescendant = root.descendants().find(d => d.data.id === node.id);
+    
+    if (targetDescendant) {
+        // 计算节点位置
+        const nodeX = targetDescendant.y - layoutWidth / 2 + 200;
+        const nodeY = targetDescendant.x - height / 2 + 50;
+        
+        // 计算变换矩阵，使节点居中
+        const targetTransform = d3.zoomIdentity
+            .translate(width / 2 - nodeX, height / 2 - nodeY)
+            .scale(1.0); // 适当放大
+        
+        // 应用变换
+        svg.transition()
+            .duration(750)
+            .call(zoom.transform, targetTransform);
+    }
+}
+
+
+
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            setupSearch();
+
+            // 修复1：缩放控制 - 使用保存的zoom实例
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                svg.transition().call(
+                    zoom.scaleBy, 1.3
+                );
+            });
+
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                svg.transition().call(
+                    zoom.scaleBy, 0.7
+                );
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                const width = document.getElementById('family-tree').clientWidth;
+                const height = document.getElementById('family-tree').clientHeight;
+                
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity.translate(100, height / 2) // 调整初始位置
+                );
+            });
+
+
+            // 布局切换
+            document.querySelectorAll('[data-layout]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-layout]').forEach(b => 
+                        b.classList.remove('active')
+                    );
+                    btn.classList.add('active');
+                    currentLayout = btn.dataset.layout;
+                    
+                    if (currentLayout === 'tree') {
+                        renderTree();
+                    } else if (currentLayout === 'radial') {
+                        renderRadial();
+                    } else if (currentLayout === 'force') {
+                        renderForce();
+                    }
+                });
+            });
+
+            // 显示选项
+            document.getElementById('showLabelsBtn').addEventListener('click', function() {
+                showLabels = !showLabels;
+                this.classList.toggle('active');
+                renderTree();
+            });
+
+            document.getElementById('showImagesBtn').addEventListener('click', function() {
+                showImages = !showImages;
+                this.classList.toggle('active');
+                renderTree();
+            });
+
+            document.getElementById('animateBtn').addEventListener('click', function() {
+                animate = !animate;
+                this.classList.toggle('active');
+                renderTree();
+            });
+
+            // 修复2：菜单切换功能
+            const menuToggle = document.getElementById('menuToggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    document.querySelector('.sidebar').classList.toggle('open');
+                });
+            }
+        }
+
+        // 渲染径向布局
+        function renderRadial() {
+            g.selectAll('*').remove();
+            
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+            const radius = Math.min(width, height) / 2 - 100;
+
+            const hierarchyData = createHierarchy();
+            const root = d3.hierarchy(hierarchyData);
+            
+            const treeLayout = d3.tree()
+                .size([2 * Math.PI, radius])
+                .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+
+            treeLayout(root);
+
+            // 绘制连线
+            g.selectAll('.link')
+                .data(root.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkRadial()
+                    .angle(d => d.x)
+                    .radius(d => d.y));
+
+            // 绘制节点
+            const nodes = g.selectAll('.node')
+                .data(root.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `
+                    rotate(${d.x * 180 / Math.PI - 90})
+                    translate(${d.y}, 0)
+                `)
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            nodes.append('circle')
+                .attr('r', 20)
+                .attr('fill', d => getNodeColor(d.data))
+                .attr('stroke', '#fff');
+
+            if (showImages) {
+                nodes.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '16px')
+                    .text(d => d.data.avatar);
+            }
+
+            if (showLabels) {
+                nodes.append('text')
+                    .attr('dy', 35)
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', d => `rotate(${d.x * 180 / Math.PI - 90})`)
+                    .style('font-size', '10px')
+                    .text(d => d.data.name);
+            }
+        }
+
+        // 渲染力导向布局
+        function renderForce() {
+            g.selectAll('*').remove();
+            
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+
+            // 创建力导向模拟
+            simulation = d3.forceSimulation(familyData.nodes)
+                .force('link', d3.forceLink(familyData.links)
+                    .id(d => d.id)
+                    .distance(100))
+                .force('charge', d3.forceManyBody().strength(-300))
+                .force('center', d3.forceCenter(0, 0))
+                .force('collision', d3.forceCollide().radius(30));
+
+            // 绘制连线
+            const link = g.selectAll('.link')
+                .data(familyData.links)
+                .enter()
+                .append('line')
+                .attr('class', 'link')
+                .style('stroke', d => d.type === 'spouse' ? '#E91E63' : '#ccc')
+                .style('stroke-width', d => d.type === 'spouse' ? 3 : 2);
+
+            // 绘制节点
+            const node = g.selectAll('.node')
+                .data(familyData.nodes)
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended))
+                .on('click', handleNodeClick)
+                .on('mouseenter', handleNodeHover)
+                .on('mouseleave', handleNodeLeave);
+
+            node.append('circle')
+                .attr('r', 25)
+                .attr('fill', d => getNodeColor(d))
+                .attr('stroke', '#fff');
+
+            if (showImages) {
+                node.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '0.35em')
+                    .style('font-size', '20px')
+                    .text(d => d.avatar);
+            }
+
+            if (showLabels) {
+                node.append('text')
+                    .attr('dy', 40)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '12px')
+                    .text(d => d.name);
+            }
+
+            // 更新位置
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
+            });
+
+            // 拖拽函数
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('totalMembers').textContent = familyData.nodes.length;
+            
+            const generations = new Set(familyData.nodes.map(n => n.generation));
+            document.getElementById('generations').textContent = generations.size;
+            
+            const families = familyData.links.filter(l => l.type === 'spouse').length;
+            document.getElementById('families').textContent = families;
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // 响应窗口大小变化
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('family-tree');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            svg.attr('width', width).attr('height', height);
+            
+            if (currentLayout === 'tree') {
+                renderTree();
+            } else if (currentLayout === 'radial') {
+                renderRadial();
+            } else if (currentLayout === 'force') {
+                renderForce();
+            }
+        });
+        
+        
+    </script>
+</body>
+</html>
