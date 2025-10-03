@@ -407,6 +407,10 @@
       display: none;
     }
 
+    #layoutSelect {
+      display: none;
+    }
+
     /* 响应式设计 */
     @media (max-width: 768px) {
       .sidebar {
@@ -452,9 +456,9 @@
             <circle cx="8.5" cy="7" r="4"></circle>
             <path d="M20 8v6M23 11h-6"></path>
           </svg>
-          家族关系图谱
+          人际关系图谱
         </h1>
-        <p>探索家族成员之间的关系网络</p>
+        <p>探索各成员之间的关系网络</p>
       </div>
 
       <!-- 搜索功能 -->
@@ -502,7 +506,7 @@
           </div>
         </div>
 
-        <div class="control-section">
+        <div class="control-section" id="layoutSelect">
           <h3>布局选项</h3>
           <div class="control-buttons">
             <button class="control-btn active" data-layout="tree">树形布局</button>
@@ -523,17 +527,17 @@
         <!-- 统计信息 -->
         <div class="stats">
           <div class="stat-item">
-            <span>家族成员总数</span>
+            <span>成员总数</span>
             <span class="stat-value" id="totalMembers">0</span>
           </div>
           <div class="stat-item">
             <span>代际数量</span>
             <span class="stat-value" id="generations">0</span>
           </div>
-          <div class="stat-item">
+          <!-- <div class="stat-item">
             <span>家庭数量</span>
             <span class="stat-value" id="families">0</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </aside>
