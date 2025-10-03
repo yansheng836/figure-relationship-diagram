@@ -1,3 +1,6 @@
+//  家族数据结构
+// const familyData = ;
+
 // 异步加载数据
 async function loadData() {
   try {
@@ -13,8 +16,6 @@ async function loadData() {
     document.getElementById('family-tree').innerHTML = '<p style="text-align:center; color:red;">加载数据失败，请检查 data.json 文件和路径。</p>';
   }
 }
-// // 家族数据结构
-// const familyData = ;
 
 // 全局变量
 let svg, g, simulation, currentLayout = 'tree';
@@ -144,7 +145,6 @@ function renderTree() {
     .attr('class', 'node')
     .attr('transform', d => `translate(${d.y - layoutWidth / 2 + 200}, ${d.x - height / 2 + 50})`) // 交换坐标
     .on('click', handleNodeClick)
-    // .on('click', handleNodeHover)
     .on('mouseenter', handleNodeHover)
     .on('mouseleave', handleNodeLeave);
 
@@ -230,7 +230,6 @@ function getNodeColor(node) {
 }
 
 // 处理节点点击
-// 处理节点点击 (保持不变)
 function handleNodeClick(event, d) {
   selectedNode = d.data;
   renderTree(); // 重新渲染（只高亮，不居中）
@@ -471,8 +470,6 @@ function setupSearch() {
 }
 
 // 聚焦到节点
-// 聚焦到节点
-// 聚焦到节点
 function focusOnNode(node) {
   const width = document.getElementById('family-tree').clientWidth;
   const height = document.getElementById('family-tree').clientHeight;
@@ -526,9 +523,6 @@ function focusOnNodeBySearch(node) {
       .call(zoom.transform, targetTransform);
   }
 }
-
-
-
 
 // 设置事件监听器
 function setupEventListeners() {
@@ -661,7 +655,6 @@ function renderRadial() {
                 translate(${d.y}, 0)
             `)
     .on('click', handleNodeClick)
-    // .on('click', handleNodeHover)
     .on('mouseenter', handleNodeHover)
     .on('mouseleave', handleNodeLeave);
 
@@ -724,7 +717,6 @@ function renderForce() {
       .on('drag', dragged)
       .on('end', dragended))
     .on('click', handleNodeClick)
-    // .on('click', handleNodeHover)
     .on('mouseenter', handleNodeHover)
     .on('mouseleave', handleNodeLeave);
 
