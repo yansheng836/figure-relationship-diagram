@@ -407,6 +407,9 @@
       display: none;
     }
 
+    #families {
+      display: none;
+    }
     #layoutSelect {
       display: none;
     }
@@ -534,10 +537,10 @@
             <span>代际数量</span>
             <span class="stat-value" id="generations">0</span>
           </div>
-          <!-- <div class="stat-item">
+          <div class="stat-item">
             <span>家庭数量</span>
             <span class="stat-value" id="families">0</span>
-          </div> -->
+          </div>
         </div>
       </div>
     </aside>
@@ -2019,9 +2022,9 @@
       updateStats();
 
       // 在全局变量区域添加
-      let defaultFocusNodeId = 1; // 设置默认聚焦的节点ID（例如颜之推）
+      let defaultFocusNodeId1 = 1; // 设置默认聚焦的节点ID（例如颜之推）
       // 设置初始焦点
-      const defaultNode = familyData.nodes.find(n => n.id === defaultFocusNodeId);
+      const defaultNode = familyData.nodes.find(n => n.id === defaultFocusNodeId1);
       if (defaultNode) {
         selectedNode = defaultNode;
         // 延迟执行以确保渲染完成
@@ -2500,7 +2503,7 @@
 
         // 应用变换
         svg.transition()
-          .duration(750)
+          .duration(550)
           .call(zoom.transform, targetTransform);
       }
     }
@@ -2538,6 +2541,7 @@
         handleNodeLeave();
         const searchResults = document.getElementById('searchResults');
         searchInput.value = '';
+
         // 在全局变量区域添加
         let defaultFocusNodeId = 1; // 设置默认聚焦的节点ID（例如颜之推）
         // 设置初始焦点
