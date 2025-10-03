@@ -6,6 +6,8 @@
 
 用了 [D3.js](https://github.com/d3/d3) 工具，参考了这个项目：<https://github.com/aelooee/red-dream-network-Tr>，效果：<https://aelooee.github.io/red-dream-network-Tr/>，但是这里用的是**力导向布局**，不是我想要的效果，然后就用**智谱清言**生成了一个，并不断优化。
 
+## 具体功能
+
 ### 优化效果和bug
 
 index.html：基本框架（图+搜索功能）。
@@ -26,7 +28,7 @@ index_fixed4-改成水平分布-优化布局.html：调整节点之间的距离�
 
 index_fixed4-改成水平分布-优化布局2.html：修复提示框位置；修复搜索命中节点，并居中；修复点击事件会移动的问题；修复重置按钮问题。
 
-index_fixed5-各模块分开.html：拆分css，js，data。
+index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；树形结构，添加配偶节点为第一个子节点（之前只有上下亲属关系）；
 
 ### 待处理问题
 
@@ -44,6 +46,14 @@ index_fixed5-各模块分开.html：拆分css，js，data。
 ### 可用模板
 
 可用模板：index_fixed5-各模块分开.html+css+js+data，data可以参考 data/main-example.json 格式，让AI根据xx人物关系，写一个同格式的数据放进去。
+
+参考腾讯元宝生成的：将明朝朱家的人物关系进行整理，并导出为上面这种json格式的文件。
+
+效果图（ps:具体数据准确度存疑……）
+
+![image-20251004000605324](README.assets/image-20251004000605324.png)
+
+![image-20251004000758322](README.assets/image-20251004000758322.png)
 
 ## GitHub Page HTML访问路径
 

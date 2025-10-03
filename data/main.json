@@ -1,1420 +1,563 @@
 {
-    "nodes": [
-      {
-        "id": 1,
-        "name": "颜回",
-        "gender": "male",
-        "generation": 1,
-        "birth": "前521年",
-        "death": "前481年",
-        "occupation": "",
-        "avatar": ""
-      },
-      {
-        "id": 2,
-        "name": "颜歆",
-        "gender": "male",
-        "generation": 2,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          1
-        ]
-      },
-      {
-        "id": 3,
-        "name": "颜俭jiǎn",
-        "gender": "male",
-        "generation": 3,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          2
-        ]
-      },
-      {
-        "id": 4,
-        "name": "颜威",
-        "gender": "male",
-        "generation": 4,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          3
-        ]
-      },
-      {
-        "id": 5,
-        "name": "颜芃péng",
-        "gender": "male",
-        "generation": 5,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          4
-        ]
-      },
-      {
-        "id": 6,
-        "name": "颜亿",
-        "gender": "male",
-        "generation": 6,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          5
-        ]
-      },
-      {
-        "id": 7,
-        "name": "颜岵hù",
-        "gender": "male",
-        "generation": 7,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          6
-        ]
-      },
-      {
-        "id": 8,
-        "name": "颜卸",
-        "gender": "male",
-        "generation": 8,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          7
-        ]
-      },
-      {
-        "id": 9,
-        "name": "颜誉",
-        "gender": "male",
-        "generation": 9,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          8
-        ]
-      },
-      {
-        "id": 10,
-        "name": "颜产",
-        "gender": "male",
-        "generation": 10,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          9
-        ]
-      },
-      {
-        "id": 11,
-        "name": "颜异",
-        "gender": "male",
-        "generation": 11,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          10
-        ]
-      },
-      {
-        "id": 12,
-        "name": "颜愚",
-        "gender": "male",
-        "generation": 12,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          11
-        ]
-      },
-      {
-        "id": 13,
-        "name": "颜逵kuí",
-        "gender": "male",
-        "generation": 13,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          12
-        ]
-      },
-      {
-        "id": 14,
-        "name": "颜驷sì",
-        "gender": "male",
-        "generation": 14,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          13
-        ]
-      },
-      {
-        "id": 15,
-        "name": "颜衷",
-        "gender": "male",
-        "generation": 15,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          14
-        ]
-      },
-      {
-        "id": 16,
-        "name": "颜凯",
-        "gender": "male",
-        "generation": 16,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          15
-        ]
-      },
-      {
-        "id": 17,
-        "name": "颜邃suì",
-        "gender": "male",
-        "generation": 17,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          16
-        ]
-      },
-      {
-        "id": 18,
-        "name": "颜龠yuè",
-        "gender": "male",
-        "generation": 18,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          17
-        ]
-      },
-      {
-        "id": 19,
-        "name": "颜绰chuò",
-        "gender": "male",
-        "generation": 19,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          18
-        ]
-      },
-      {
-        "id": 20,
-        "name": "颜准",
-        "gender": "male",
-        "generation": 20,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          19
-        ]
-      },
-      {
-        "id": 21,
-        "name": "颜阮",
-        "gender": "male",
-        "generation": 21,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          20
-        ]
-      },
-      {
-        "id": 22,
-        "name": "颜亮",
-        "gender": "male",
-        "generation": 22,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          21
-        ]
-      },
-      {
-        "id": 23,
-        "name": "颜敫jiǎo",
-        "gender": "male",
-        "generation": 23,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          22
-        ]
-      },
-      {
-        "id": 24,
-        "name": "颜斐",
-        "gender": "male",
-        "generation": 24,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          23
-        ]
-      },
-      {
-        "id": 25,
-        "name": "颜鲁",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          24
-        ]
-      },
-      {
-        "id": 26,
-        "name": "颜欢",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          24
-        ]
-      },
-      {
-        "id": 27,
-        "name": "颜盛",
-        "gender": "male",
-        "generation": 24,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          23
-        ]
-      },
-      {
-        "id": 28,
-        "name": "颜钦",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          27
-        ]
-      },
-      {
-        "id": 29,
-        "name": "颜默",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 30,
-        "name": "颜畿jī",
-        "gender": "male",
-        "generation": 27,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          29
-        ]
-      },
-      {
-        "id": 31,
-        "name": "颜辇niǎn",
-        "gender": "male",
-        "generation": 27,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          29
-        ]
-      },
-      {
-        "id": 32,
-        "name": "颜含",
-        "gender": "male",
-        "generation": 27,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          29
-        ]
-      },
-      {
-        "id": 33,
-        "name": "颜髦máo",
-        "gender": "male",
-        "generation": 28,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          32
-        ]
-      },
-      {
-        "id": 34,
-        "name": "颜綝lín",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 35,
-        "name": "颜靖之",
-        "gender": "male",
-        "generation": 30,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          34
-        ]
-      },
-      {
-        "id": 36,
-        "name": "颜腾之",
-        "gender": "male",
-        "generation": 31,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          35
-        ]
-      },
-      {
-        "id": 37,
-        "name": "颜兴之",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          36
-        ]
-      },
-      {
-        "id": 38,
-        "name": "颜登",
-        "gender": "male",
-        "generation": 33,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          37
-        ]
-      },
-      {
-        "id": 39,
-        "name": "颜炳之",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          36
-        ]
-      },
-      {
-        "id": 40,
-        "name": "颜见远",
-        "gender": "male",
-        "generation": 33,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          39
-        ]
-      },
-      {
-        "id": 41,
-        "name": "颜协",
-        "gender": "male",
-        "generation": 34,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          40
-        ]
-      },
-      {
-        "id": 42,
-        "name": "颜之仪",
-        "gender": "male",
-        "generation": 35,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          41
-        ]
-      },
-      {
-        "id": 43,
-        "name": "颜冠",
-        "gender": "male",
-        "generation": 36,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          42
-        ]
-      },
-      {
-        "id": 44,
-        "name": "颜昶",
-        "gender": "male",
-        "generation": 36,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          42
-        ]
-      },
-      {
-        "id": 45,
-        "name": "颜万石",
-        "gender": "male",
-        "generation": 37,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          44
-        ]
-      },
-      {
-        "id": 46,
-        "name": "颜之奇",
-        "gender": "male",
-        "generation": 35,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          41
-        ]
-      },
-      {
-        "id": 47,
-        "name": "颜之推：撰写《颜氏家训》，开后世“家训”的先河",
-        "gender": "male",
-        "generation": 35,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          41
-        ]
-      },
-      {
-        "id": 48,
-        "name": "颜思鲁",
-        "gender": "male",
-        "generation": 36,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          47
-        ]
-      },
-      {
-        "id": 49,
-        "name": "颜愍mǐn楚",
-        "gender": "male",
-        "generation": 36,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          47
-        ]
-      },
-      {
-        "id": 50,
-        "name": "颜游秦",
-        "gender": "male",
-        "generation": 36,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          47
-        ]
-      },
-      {
-        "id": 51,
-        "name": "颜之善",
-        "gender": "male",
-        "generation": 35,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          41
-        ]
-      },
-      {
-        "id": 52,
-        "name": "颜宣仁",
-        "gender": "male",
-        "generation": 33,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          39
-        ]
-      },
-      {
-        "id": 53,
-        "name": "颜泰之",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          36
-        ]
-      },
-      {
-        "id": 54,
-        "name": "颜吾昌",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          36
-        ]
-      },
-      {
-        "id": 55,
-        "name": "颜思遄chuán",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          36
-        ]
-      },
-      {
-        "id": 56,
-        "name": "颜遵之",
-        "gender": "male",
-        "generation": 31,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          35
-        ]
-      },
-      {
-        "id": 57,
-        "name": "颜恭之",
-        "gender": "male",
-        "generation": 31,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          35
-        ]
-      },
-      {
-        "id": 58,
-        "name": "颜秉之",
-        "gender": "male",
-        "generation": 30,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          34
-        ]
-      },
-      {
-        "id": 59,
-        "name": "颜纶",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 60,
-        "name": "颜矫",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 61,
-        "name": "颜朗",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 62,
-        "name": "颜畅",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 63,
-        "name": "颜绍",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          33
-        ]
-      },
-      {
-        "id": 64,
-        "name": "颜谦",
-        "gender": "male",
-        "generation": 28,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          32
-        ]
-      },
-      {
-        "id": 65,
-        "name": "颜约",
-        "gender": "male",
-        "generation": 28,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          32
-        ]
-      },
-      {
-        "id": 66,
-        "name": "颜显",
-        "gender": "male",
-        "generation": 29,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          65
-        ]
-      },
-      {
-        "id": 67,
-        "name": "颜延之",
-        "gender": "male",
-        "generation": 30,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          66
-        ]
-      },
-      {
-        "id": 68,
-        "name": "颜竣",
-        "gender": "male",
-        "generation": 31,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          67
-        ]
-      },
-      {
-        "id": 69,
-        "name": "颜辟强",
-        "gender": "male",
-        "generation": 32,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          68
-        ]
-      },
-      {
-        "id": 70,
-        "name": "颜测",
-        "gender": "male",
-        "generation": 31,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          67
-        ]
-      },
-      {
-        "id": 71,
-        "name": "颜平",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 72,
-        "name": "颜协",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 73,
-        "name": "颜雅",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 74,
-        "name": "颜闵",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 75,
-        "name": "颜永",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 76,
-        "name": "颜考",
-        "gender": "male",
-        "generation": 26,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          28
-        ]
-      },
-      {
-        "id": 77,
-        "name": "颜曾",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          27
-        ]
-      },
-      {
-        "id": 78,
-        "name": "颜兴",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          27
-        ]
-      },
-      {
-        "id": 79,
-        "name": "颜士光",
-        "gender": "male",
-        "generation": 25,
-        "birth": "",
-        "death": "",
-        "occupation": "",
-        "avatar": "",
-        "parents": [
-          27
-        ]
-      }
-    ],
-    "links": [
-      {
-        "source": 1,
-        "target": 2,
-        "type": "parent"
-      },
-      {
-        "source": 2,
-        "target": 3,
-        "type": "parent"
-      },
-      {
-        "source": 3,
-        "target": 4,
-        "type": "parent"
-      },
-      {
-        "source": 4,
-        "target": 5,
-        "type": "parent"
-      },
-      {
-        "source": 5,
-        "target": 6,
-        "type": "parent"
-      },
-      {
-        "source": 6,
-        "target": 7,
-        "type": "parent"
-      },
-      {
-        "source": 7,
-        "target": 8,
-        "type": "parent"
-      },
-      {
-        "source": 8,
-        "target": 9,
-        "type": "parent"
-      },
-      {
-        "source": 9,
-        "target": 10,
-        "type": "parent"
-      },
-      {
-        "source": 10,
-        "target": 11,
-        "type": "parent"
-      },
-      {
-        "source": 11,
-        "target": 12,
-        "type": "parent"
-      },
-      {
-        "source": 12,
-        "target": 13,
-        "type": "parent"
-      },
-      {
-        "source": 13,
-        "target": 14,
-        "type": "parent"
-      },
-      {
-        "source": 14,
-        "target": 15,
-        "type": "parent"
-      },
-      {
-        "source": 15,
-        "target": 16,
-        "type": "parent"
-      },
-      {
-        "source": 16,
-        "target": 17,
-        "type": "parent"
-      },
-      {
-        "source": 17,
-        "target": 18,
-        "type": "parent"
-      },
-      {
-        "source": 18,
-        "target": 19,
-        "type": "parent"
-      },
-      {
-        "source": 19,
-        "target": 20,
-        "type": "parent"
-      },
-      {
-        "source": 20,
-        "target": 21,
-        "type": "parent"
-      },
-      {
-        "source": 21,
-        "target": 22,
-        "type": "parent"
-      },
-      {
-        "source": 22,
-        "target": 23,
-        "type": "parent"
-      },
-      {
-        "source": 23,
-        "target": 24,
-        "type": "parent"
-      },
-      {
-        "source": 24,
-        "target": 25,
-        "type": "parent"
-      },
-      {
-        "source": 24,
-        "target": 26,
-        "type": "parent"
-      },
-      {
-        "source": 23,
-        "target": 27,
-        "type": "parent"
-      },
-      {
-        "source": 27,
-        "target": 28,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 29,
-        "type": "parent"
-      },
-      {
-        "source": 29,
-        "target": 30,
-        "type": "parent"
-      },
-      {
-        "source": 29,
-        "target": 31,
-        "type": "parent"
-      },
-      {
-        "source": 29,
-        "target": 32,
-        "type": "parent"
-      },
-      {
-        "source": 32,
-        "target": 33,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 34,
-        "type": "parent"
-      },
-      {
-        "source": 34,
-        "target": 35,
-        "type": "parent"
-      },
-      {
-        "source": 35,
-        "target": 36,
-        "type": "parent"
-      },
-      {
-        "source": 36,
-        "target": 37,
-        "type": "parent"
-      },
-      {
-        "source": 37,
-        "target": 38,
-        "type": "parent"
-      },
-      {
-        "source": 36,
-        "target": 39,
-        "type": "parent"
-      },
-      {
-        "source": 39,
-        "target": 40,
-        "type": "parent"
-      },
-      {
-        "source": 40,
-        "target": 41,
-        "type": "parent"
-      },
-      {
-        "source": 41,
-        "target": 42,
-        "type": "parent"
-      },
-      {
-        "source": 42,
-        "target": 43,
-        "type": "parent"
-      },
-      {
-        "source": 42,
-        "target": 44,
-        "type": "parent"
-      },
-      {
-        "source": 44,
-        "target": 45,
-        "type": "parent"
-      },
-      {
-        "source": 41,
-        "target": 46,
-        "type": "parent"
-      },
-      {
-        "source": 41,
-        "target": 47,
-        "type": "parent"
-      },
-      {
-        "source": 47,
-        "target": 48,
-        "type": "parent"
-      },
-      {
-        "source": 47,
-        "target": 49,
-        "type": "parent"
-      },
-      {
-        "source": 47,
-        "target": 50,
-        "type": "parent"
-      },
-      {
-        "source": 41,
-        "target": 51,
-        "type": "parent"
-      },
-      {
-        "source": 39,
-        "target": 52,
-        "type": "parent"
-      },
-      {
-        "source": 36,
-        "target": 53,
-        "type": "parent"
-      },
-      {
-        "source": 36,
-        "target": 54,
-        "type": "parent"
-      },
-      {
-        "source": 36,
-        "target": 55,
-        "type": "parent"
-      },
-      {
-        "source": 35,
-        "target": 56,
-        "type": "parent"
-      },
-      {
-        "source": 35,
-        "target": 57,
-        "type": "parent"
-      },
-      {
-        "source": 34,
-        "target": 58,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 59,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 60,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 61,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 62,
-        "type": "parent"
-      },
-      {
-        "source": 33,
-        "target": 63,
-        "type": "parent"
-      },
-      {
-        "source": 32,
-        "target": 64,
-        "type": "parent"
-      },
-      {
-        "source": 32,
-        "target": 65,
-        "type": "parent"
-      },
-      {
-        "source": 65,
-        "target": 66,
-        "type": "parent"
-      },
-      {
-        "source": 66,
-        "target": 67,
-        "type": "parent"
-      },
-      {
-        "source": 67,
-        "target": 68,
-        "type": "parent"
-      },
-      {
-        "source": 68,
-        "target": 69,
-        "type": "parent"
-      },
-      {
-        "source": 67,
-        "target": 70,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 71,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 72,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 73,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 74,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 75,
-        "type": "parent"
-      },
-      {
-        "source": 28,
-        "target": 76,
-        "type": "parent"
-      },
-      {
-        "source": 27,
-        "target": 77,
-        "type": "parent"
-      },
-      {
-        "source": 27,
-        "target": 78,
-        "type": "parent"
-      },
-      {
-        "source": 27,
-        "target": 79,
-        "type": "parent"
-      }
-    ]
-  }
+  "nodes": [
+    {
+      "id": 1,
+      "name": "朱元璋",
+      "gender": "male",
+      "generation": 1,
+      "birth": "1328",
+      "death": "1398",
+      "occupation": "明朝开国皇帝",
+      "introduction": "",
+      "avatar": "👴"
+    },
+    {
+      "id": 2,
+      "name": "马皇后",
+      "gender": "female",
+      "generation": 1,
+      "birth": "1332",
+      "death": "1382",
+      "occupation": "皇后",
+      "introduction": "",
+      "avatar": "👵"
+    },
+    {
+      "id": 3,
+      "name": "朱标",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1355",
+      "death": "1392",
+      "occupation": "太子",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "name": "朱樉",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1356",
+      "death": "1395",
+      "occupation": "秦王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 5,
+      "name": "朱棡",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1358",
+      "death": "1398",
+      "occupation": "晋王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 6,
+      "name": "朱棣",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1360",
+      "death": "1424",
+      "occupation": "永乐帝",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 7,
+      "name": "朱橚",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1361",
+      "death": "1425",
+      "occupation": "周王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 8,
+      "name": "朱桢",
+      "gender": "male",
+      "generation": 2,
+      "birth": "1364",
+      "death": "1425",
+      "occupation": "楚王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 9,
+      "name": "朱允炆",
+      "gender": "male",
+      "generation": 3,
+      "birth": "1377",
+      "death": "1402?",
+      "occupation": "建文帝",
+      "introduction": "",
+      "avatar": "👦",
+      "parents": [
+        3
+      ]
+    },
+    {
+      "id": 10,
+      "name": "朱高炽",
+      "gender": "male",
+      "generation": 3,
+      "birth": "1378",
+      "death": "1425",
+      "occupation": "仁宗",
+      "introduction": "",
+      "avatar": "👦",
+      "parents": [
+        6
+      ]
+    },
+    {
+      "id": 11,
+      "name": "朱高煦",
+      "gender": "male",
+      "generation": 3,
+      "birth": "1380",
+      "death": "1431",
+      "occupation": "汉王",
+      "introduction": "",
+      "avatar": "👦",
+      "parents": [
+        6
+      ]
+    },
+    {
+      "id": 12,
+      "name": "朱高燧",
+      "gender": "male",
+      "generation": 3,
+      "birth": "1383",
+      "death": "1431",
+      "occupation": "赵王",
+      "introduction": "",
+      "avatar": "👦",
+      "parents": [
+        6
+      ]
+    },
+    {
+      "id": 13,
+      "name": "朱瞻基",
+      "gender": "male",
+      "generation": 4,
+      "birth": "1398",
+      "death": "1435",
+      "occupation": "宣宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        10
+      ]
+    },
+    {
+      "id": 14,
+      "name": "朱瞻墉",
+      "gender": "male",
+      "generation": 4,
+      "birth": "1402",
+      "death": "1439",
+      "occupation": "越王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        10
+      ]
+    },
+    {
+      "id": 15,
+      "name": "朱瞻墡",
+      "gender": "male",
+      "generation": 4,
+      "birth": "1406",
+      "death": "1478",
+      "occupation": "襄王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        10
+      ]
+    },
+    {
+      "id": 16,
+      "name": "朱祁镇",
+      "gender": "male",
+      "generation": 5,
+      "birth": "1427",
+      "death": "1464",
+      "occupation": "英宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        13
+      ]
+    },
+    {
+      "id": 17,
+      "name": "朱祁钰",
+      "gender": "male",
+      "generation": 5,
+      "birth": "1428",
+      "death": "1457",
+      "occupation": "代宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        13
+      ]
+    },
+    {
+      "id": 18,
+      "name": "朱见深",
+      "gender": "male",
+      "generation": 6,
+      "birth": "1447",
+      "death": "1487",
+      "occupation": "宪宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        16
+      ]
+    },
+    {
+      "id": 19,
+      "name": "朱见泽",
+      "gender": "male",
+      "generation": 6,
+      "birth": "1452",
+      "death": "1506",
+      "occupation": "崇王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        16
+      ]
+    },
+    {
+      "id": 20,
+      "name": "朱祐樘",
+      "gender": "male",
+      "generation": 7,
+      "birth": "1460",
+      "death": "1505",
+      "occupation": "孝宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        18
+      ]
+    },
+    {
+      "id": 21,
+      "name": "朱祐杬",
+      "gender": "male",
+      "generation": 7,
+      "birth": "1476",
+      "death": "1519",
+      "occupation": "兴献王",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        18
+      ]
+    },
+    {
+      "id": 22,
+      "name": "朱厚照",
+      "gender": "male",
+      "generation": 8,
+      "birth": "1491",
+      "death": "1521",
+      "occupation": "武宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        20
+      ]
+    },
+    {
+      "id": 23,
+      "name": "朱厚熜",
+      "gender": "male",
+      "generation": 8,
+      "birth": "1507",
+      "death": "1567",
+      "occupation": "世宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        21
+      ]
+    },
+    {
+      "id": 24,
+      "name": "朱载垕",
+      "gender": "male",
+      "generation": 9,
+      "birth": "1537",
+      "death": "1572",
+      "occupation": "穆宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        23
+      ]
+    },
+    {
+      "id": 25,
+      "name": "朱翊钧",
+      "gender": "male",
+      "generation": 10,
+      "birth": "1563",
+      "death": "1620",
+      "occupation": "神宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        24
+      ]
+    },
+    {
+      "id": 26,
+      "name": "朱常洛",
+      "gender": "male",
+      "generation": 11,
+      "birth": "1582",
+      "death": "1620",
+      "occupation": "光宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        25
+      ]
+    },
+    {
+      "id": 27,
+      "name": "朱由校",
+      "gender": "male",
+      "generation": 12,
+      "birth": "1605",
+      "death": "1627",
+      "occupation": "熹宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        26
+      ]
+    },
+    {
+      "id": 28,
+      "name": "朱由检",
+      "gender": "male",
+      "generation": 12,
+      "birth": "1611",
+      "death": "1644",
+      "occupation": "思宗",
+      "introduction": "",
+      "avatar": "👨",
+      "parents": [
+        26
+      ]
+    }
+  ],
+  "links": [
+    {
+      "source": 1,
+      "target": 2,
+      "type": "spouse"
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "type": "parent"
+    },
+    {
+      "source": 1,
+      "target": 4,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 4,
+      "type": "parent"
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 5,
+      "type": "parent"
+    },
+    {
+      "source": 1,
+      "target": 6,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 6,
+      "type": "parent"
+    },
+    {
+      "source": 1,
+      "target": 7,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 7,
+      "type": "parent"
+    },
+    {
+      "source": 1,
+      "target": 8,
+      "type": "parent"
+    },
+    {
+      "source": 2,
+      "target": 8,
+      "type": "parent"
+    },
+    {
+      "source": 3,
+      "target": 9,
+      "type": "parent"
+    },
+    {
+      "source": 6,
+      "target": 10,
+      "type": "parent"
+    },
+    {
+      "source": 6,
+      "target": 11,
+      "type": "parent"
+    },
+    {
+      "source": 6,
+      "target": 12,
+      "type": "parent"
+    },
+    {
+      "source": 10,
+      "target": 13,
+      "type": "parent"
+    },
+    {
+      "source": 10,
+      "target": 14,
+      "type": "parent"
+    },
+    {
+      "source": 10,
+      "target": 15,
+      "type": "parent"
+    },
+    {
+      "source": 13,
+      "target": 16,
+      "type": "parent"
+    },
+    {
+      "source": 13,
+      "target": 17,
+      "type": "parent"
+    },
+    {
+      "source": 16,
+      "target": 18,
+      "type": "parent"
+    },
+    {
+      "source": 16,
+      "target": 19,
+      "type": "parent"
+    },
+    {
+      "source": 18,
+      "target": 20,
+      "type": "parent"
+    },
+    {
+      "source": 18,
+      "target": 21,
+      "type": "parent"
+    },
+    {
+      "source": 20,
+      "target": 22,
+      "type": "parent"
+    },
+    {
+      "source": 21,
+      "target": 23,
+      "type": "parent"
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "type": "parent"
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "type": "parent"
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "type": "parent"
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "type": "parent"
+    },
+    {
+      "source": 26,
+      "target": 28,
+      "type": "parent"
+    }
+  ]
+}

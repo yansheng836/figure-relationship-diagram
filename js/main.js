@@ -4,6 +4,7 @@
 // 异步加载数据
 async function loadData() {
   try {
+    // const response = await fetch('./data/main-example.json');
     const response = await fetch('./data/main.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,7 +99,8 @@ function renderTree() {
   const treeLayout = d3.tree()
     .size([height - 100, layoutWidth]) // 注意：先高度后宽度
     .nodeSize([50, 150]) // 节点大小：垂直50px，水平200px
-    .separation((a, b) => (a.parent == b.parent ? 1.4 : 1.4));// 堂兄弟间距稍大
+    // .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);// 堂兄弟间距稍大
+    .separation((a, b) => (a.parent == b.parent ? 1.8 : 1.8));
 
   treeLayout(root);
 
@@ -197,8 +199,8 @@ function renderTree() {
 }
 
 
-// 创建层次结构数据
-function createHierarchy() {
+// 创建层次结构数据：不包含配偶
+function createHierarchy0() {
   // 找到根节点（第一代）
   const rootNodes = familyData.nodes.filter(n => n.generation === 1);
 
@@ -220,6 +222,74 @@ function createHierarchy() {
     children: buildChildren(rootNodes[0].id)
   };
 }
+
+// 创建层次结构数据：包含配偶，配偶也当做子节点
+function createHierarchy() {
+  // 找到根节点（第一代）
+  const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+
+  // 构建层次结构（包括配偶）
+  const buildChildren = (parentId) => {
+    const children = familyData.nodes.filter(n =>
+      n.parents && n.parents.includes(parentId)
+    );
+
+    return children.map(child => {
+      // 查找配偶节点
+      const spouse = familyData.nodes.find(n => 
+        n.spouse === child.id || 
+        familyData.links.some(l => 
+          (l.source === child.id && l.target === n.id && l.type === 'spouse') ||
+          (l.target === child.id && l.source === n.id && l.type === 'spouse')
+        )
+      );
+
+      // 先构建普通子节点
+      const nodeData = {
+        ...child,
+        children: buildChildren(child.id)
+      };
+
+      // 如果有配偶，添加为第一个子节点
+      if (spouse) {
+        nodeData.children.unshift({
+          ...spouse,
+          children: [] // 配偶通常没有子节点（子节点已通过parents关联）
+        });
+      }
+
+      return nodeData;
+    });
+  };
+
+  // 处理根节点的配偶
+  const rootSpouse = familyData.nodes.find(n => 
+    n.spouse === rootNodes[0].id || 
+    familyData.links.some(l => 
+      (l.source === rootNodes[0].id && l.target === n.id && l.type === 'spouse') ||
+      (l.target === rootNodes[0].id && l.source === n.id && l.type === 'spouse')
+    )
+  );
+
+  // 构建根节点的子节点数组
+  const rootChildren = buildChildren(rootNodes[0].id);
+  
+  // 如果有配偶，添加为第一个子节点
+  if (rootSpouse) {
+    rootChildren.unshift({
+      ...rootSpouse,
+      children: []
+    });
+  }
+
+  const hierarchyData = {
+    ...rootNodes[0],
+    children: rootChildren
+  };
+
+  return hierarchyData;
+}
+
 
 // 获取节点颜色
 function getNodeColor(node) {
@@ -262,6 +332,8 @@ function handleNodeHover(event, d) {
 // `;
   tooltip.querySelector('.tooltip-info').innerHTML = `
     <div>世代：第${d.data.generation}代</div>
+    ${d.data.birth ? `<div>出生年份: ${d.data.birth}</div>` : ''}
+    ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
     <div>简介: ${d.data.introduction || ''}</div>
 `;
 

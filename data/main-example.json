@@ -1,26 +1,26 @@
 {
   "nodes": [
-      { "id": 1, "name": "张国强", "gender": "male", "generation": 1, "birth": "1920", "death": "1995", "occupation": "企业家", "avatar": "👴" },
-      { "id": 2, "name": "李秀英", "gender": "female", "generation": 1, "birth": "1925", "death": "2000", "occupation": "教师", "avatar": "👵" },
+      { "id": 1, "name": "张国强", "gender": "male", "generation": 1, "birth": "1920", "death": "1995", "occupation": "企业家", "introduction": "",  "avatar": "👴" },
+      { "id": 2, "name": "李秀英", "gender": "female", "generation": 1, "birth": "1925", "death": "2000", "occupation": "教师", "introduction": "",  "avatar": "👵" },
 
-      { "id": 3, "name": "张建国", "gender": "male", "generation": 2, "birth": "1950", "occupation": "工程师", "avatar": "👨", "parents": [1, 2] },
-      { "id": 4, "name": "王丽华", "gender": "female", "generation": 2, "birth": "1952", "occupation": "医生", "avatar": "👩", "spouse": 3 },
-      { "id": 5, "name": "张建华", "gender": "male", "generation": 2, "birth": "1953", "occupation": "律师", "avatar": "👨", "parents": [1, 2] },
-      { "id": 6, "name": "赵美玲", "gender": "female", "generation": 2, "birth": "1955", "occupation": "会计", "avatar": "👩", "spouse": 5 },
-      { "id": 7, "name": "张建民", "gender": "male", "generation": 2, "birth": "1957", "occupation": "教授", "avatar": "👨", "parents": [1, 2] },
-      { "id": 8, "name": "陈小芳", "gender": "female", "generation": 2, "birth": "1958", "occupation": "护士", "avatar": "👩", "spouse": 7 },
+      { "id": 3, "name": "张建国", "gender": "male", "generation": 2, "birth": "1950", "occupation": "工程师", "introduction": "",  "avatar": "👨", "parents": [1, 2] },
+      { "id": 4, "name": "王丽华", "gender": "female", "generation": 2, "birth": "1952", "occupation": "医生", "introduction": "",  "avatar": "👩", "spouse": 3 },
+      { "id": 5, "name": "张建华", "gender": "male", "generation": 2, "birth": "1953", "occupation": "律师",  "introduction": "", "avatar": "👨", "parents": [1, 2] },
+      { "id": 6, "name": "赵美玲", "gender": "female", "generation": 2, "birth": "1955", "occupation": "会计", "introduction": "",  "avatar": "👩", "spouse": 5 },
+      { "id": 7, "name": "张建民", "gender": "male", "generation": 2, "birth": "1957", "occupation": "教授",  "introduction": "", "avatar": "👨", "parents": [1, 2] },
+      { "id": 8, "name": "陈小芳", "gender": "female", "generation": 2, "birth": "1958", "occupation": "护士",  "introduction": "", "avatar": "👩", "spouse": 7 },
       
-      { "id": 9, "name": "张小明", "gender": "male", "generation": 3, "birth": "1978", "occupation": "软件工程师", "avatar": "👦", "parents": [3, 4] },
-      { "id": 10, "name": "张小红", "gender": "female", "generation": 3, "birth": "1980", "occupation": "设计师", "avatar": "👧", "parents": [3, 4] },
-      { "id": 11, "name": "张小军", "gender": "male", "generation": 3, "birth": "1982", "occupation": "金融分析师", "avatar": "👦", "parents": [5, 6] },
-      { "id": 12, "name": "张小丽", "gender": "female", "generation": 3, "birth": "1984", "occupation": "市场经理", "avatar": "👧", "parents": [5, 6] },
-      { "id": 13, "name": "张小伟", "gender": "male", "generation": 3, "birth": "1985", "occupation": "创业者", "avatar": "👦", "parents": [7, 8] },
-      { "id": 14, "name": "张小芳", "gender": "female", "generation": 3, "birth": "1987", "occupation": "记者", "avatar": "👧", "parents": [7, 8] },
+      { "id": 9, "name": "张小明", "gender": "male", "generation": 3, "birth": "1978", "occupation": "软件工程师", "introduction": "",  "avatar": "👦", "parents": [3, 4] },
+      { "id": 10, "name": "张小红", "gender": "female", "generation": 3, "birth": "1980", "occupation": "设计师",  "introduction": "", "avatar": "👧", "parents": [3, 4] },
+      { "id": 11, "name": "张小军", "gender": "male", "generation": 3, "birth": "1982", "occupation": "金融分析师", "introduction": "",  "avatar": "👦", "parents": [5, 6] },
+      { "id": 12, "name": "张小丽", "gender": "female", "generation": 3, "birth": "1984", "occupation": "市场经理", "introduction": "",  "avatar": "👧", "parents": [5, 6] },
+      { "id": 13, "name": "张小伟", "gender": "male", "generation": 3, "birth": "1985", "occupation": "创业者", "introduction": "",  "avatar": "👦", "parents": [7, 8] },
+      { "id": 14, "name": "张小芳", "gender": "female", "generation": 3, "birth": "1987", "occupation": "记者", "introduction": "",  "avatar": "👧", "parents": [7, 8] },
       
-      { "id": 15, "name": "张天天", "gender": "male", "generation": 4, "birth": "2005", "occupation": "学生", "avatar": "👶", "parents": [9] },
-      { "id": 16, "name": "张乐乐", "gender": "female", "generation": 4, "birth": "2008", "occupation": "学生", "avatar": "👶", "parents": [9] },
-      { "id": 17, "name": "张思思", "gender": "female", "generation": 4, "birth": "2010", "occupation": "学生", "avatar": "👶", "parents": [11] },
-      { "id": 18, "name": "张明明", "gender": "male", "generation": 4, "birth": "2012", "occupation": "学生", "avatar": "👶", "parents": [13] }
+      { "id": 15, "name": "张天天", "gender": "male", "generation": 4, "birth": "2005", "occupation": "学生", "introduction": "",  "avatar": "👶", "parents": [9] },
+      { "id": 16, "name": "张乐乐", "gender": "female", "generation": 4, "birth": "2008", "occupation": "学生", "introduction": "",  "avatar": "👶", "parents": [9] },
+      { "id": 17, "name": "张思思", "gender": "female", "generation": 4, "birth": "2010", "occupation": "学生", "introduction": "",  "avatar": "👶", "parents": [11] },
+      { "id": 18, "name": "张明明", "gender": "male", "generation": 4, "birth": "2012", "occupation": "学生", "introduction": "",  "avatar": "👶", "parents": [13] }
   ],
   "links": [
       { "source": 1, "target": 2, "type": "spouse" },
