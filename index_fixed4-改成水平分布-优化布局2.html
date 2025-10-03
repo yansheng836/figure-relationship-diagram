@@ -2523,13 +2523,29 @@
       });
 
       document.getElementById('resetBtn').addEventListener('click', () => {
-        const width = document.getElementById('family-tree').clientWidth;
-        const height = document.getElementById('family-tree').clientHeight;
+        // const width = document.getElementById('family-tree').clientWidth;
+        // const height = document.getElementById('family-tree').clientHeight;
 
-        svg.transition().duration(750).call(
-          zoom.transform,
-          d3.zoomIdentity.translate(100, height / 2) // 调整初始位置
-        );
+        // svg.transition().duration(750).call(
+        //   zoom.transform,
+        //   d3.zoomIdentity.translate(100, height / 2) // 调整初始位置
+        // );
+
+        handleNodeLeave();
+        const searchResults = document.getElementById('searchResults');
+        searchInput.value = '';
+        // 在全局变量区域添加
+        let defaultFocusNodeId = 1; // 设置默认聚焦的节点ID（例如颜之推）
+        // 设置初始焦点
+        const defaultNode = familyData.nodes.find(n => n.id === defaultFocusNodeId);
+        if (defaultNode) {
+          selectedNode = defaultNode;
+          // 延迟执行以确保渲染完成
+          setTimeout(() => {
+            focusOnNodeBySearch(defaultNode);
+            highlightConnections(defaultNode);
+          }, 500);
+        }
       });
 
 
