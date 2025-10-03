@@ -321,7 +321,7 @@ body {
   line-height: 1.5;
 }
 
-/* 图例 */
+/* 右下角图例 */
 .legend {
   position: absolute;
   bottom: 20px;
@@ -408,6 +408,14 @@ body {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+
+  /* 菜单切换按钮 */
+  .menu-toggle {
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    top: 32px;
+  }
+
   .sidebar {
     width: 50%;
     position: absolute;
@@ -417,23 +425,83 @@ body {
 
   .sidebar.open {
     transform: translateX(0);
+    opacity: 0.8;
   }
 
-  .menu-toggle {
-    display: block;
+  .sidebar-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
   }
 
+  .search-container {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  /* 控制面板 */
+  .controls {
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* 视图控制，显示选项 */
+  .control-section {
+    margin-bottom: 20px;
+  }
+
+  .control-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .control-btn {
+    padding: 6px 11px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* 统计信息 */
+  .stats {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-top: 15px;
+  }
+
+  /* 右侧 */
   .main-content {
-    margin: 10px;
+    /* 上右下左 */
+    margin: 10px 10px 20px 10px;
   }
 
   svg {
     width: 370;
-    height: 80%;
+    height: 99%;
   }
 
   .container {
     display: flex;
     height: 100vh;
+  }
+
+  /* 右下角图例 */
+  .legend {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
