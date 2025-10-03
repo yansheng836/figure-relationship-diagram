@@ -68,3 +68,5 @@ index_fixed4-改成水平分布-优化布局2.html: <https://yansheng836.github.
 
 index_fixed4-改成水平分布.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed4-改成水平分布.html>
 
+index_fixed5-各模块分开.html: <https://yansheng836.github.io/figure-relationship-diagram/index_fixed5-各模块分开.html>
+

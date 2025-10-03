@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家族关系图谱 - 交互式可视化</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style type="text/css" ></style>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <path d="M20 8v6M23 11h-6"></path>
+          </svg>
+          人际关系图谱
+        </h1>
+        <p>探索各成员之间的关系网络</p>
+      </div>
+
+      <!-- 搜索功能 -->
+      <div class="search-container">
+        <div class="search-box">
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索家族成员...">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <!-- 控制面板 -->
+      <div class="controls">
+        <div class="control-section">
+          <h3>视图控制</h3>
+          <div class="control-buttons">
+            <button class="control-btn" id="zoomInBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+                <line x1="11" y1="8" x2="11" y2="14"></line>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+              </svg>
+              放大
+            </button>
+            <button class="control-btn" id="zoomOutBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+              </svg>
+              缩小
+            </button>
+            <button class="control-btn" id="resetBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              重置
+            </button>
+          </div>
+        </div>
+
+        <div class="control-section" id="layoutSelect">
+          <h3>布局选项</h3>
+          <div class="control-buttons">
+            <button class="control-btn active" data-layout="tree">树形布局</button>
+            <button class="control-btn" data-layout="radial">径向布局</button>
+            <button class="control-btn" data-layout="force">力导向布局</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <h3>显示选项</h3>
+          <div class="control-buttons">
+            <button class="control-btn active" id="showLabelsBtn">显示标签</button>
+            <button class="control-btn active" id="showImagesBtn">显示照片</button>
+            <button class="control-btn" id="animateBtn">动画效果</button>
+          </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats">
+          <div class="stat-item">
+            <span>成员总数</span>
+            <span class="stat-value" id="totalMembers">0</span>
+          </div>
+          <div class="stat-item">
+            <span>代际数量</span>
+            <span class="stat-value" id="generations">0</span>
+          </div>
+          <div class="stat-item">
+            <span>家庭数量</span>
+            <span class="stat-value" id="families">0</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 菜单切换按钮 -->
+      <button class="menu-toggle" id="menuToggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <div id="family-tree"></div>
+
+      <!-- 图例 -->
+      <div class="legend">
+        <div class="legend-title">图例说明</div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #4CAF50;"></div>
+          <span>男性</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #E91E63;"></div>
+          <span>女性</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #FF9800;"></div>
+          <span>当前选中</span>
+        </div>
+      </div>
+
+      <!-- 提示框 -->
+      <div class="tooltip" id="tooltip">
+        <div class="tooltip-title"></div>
+        <div class="tooltip-info"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/main.js"></script>
+</body>
+
+</html>
