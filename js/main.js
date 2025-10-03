@@ -253,11 +253,16 @@ function handleNodeHover(event, d) {
 
   // 设置提示框内容
   tooltip.querySelector('.tooltip-title').textContent = d.data.name;
+  
+//   tooltip.querySelector('.tooltip-info').innerHTML = `
+//     <div>出生年份: ${d.data.birth || '未知'}</div>
+//     ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
+//     <div>职业: ${d.data.occupation || '未知'}</div>
+//     <div>第${d.data.generation}代</div>
+// `;
   tooltip.querySelector('.tooltip-info').innerHTML = `
-    <div>出生年份: ${d.data.birth || '未知'}</div>
-    ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
-    <div>职业: ${d.data.occupation || '未知'}</div>
-    <div>第${d.data.generation}代</div>
+    <div>世代：第${d.data.generation}代</div>
+    <div>简介: ${d.data.introduction || ''}</div>
 `;
 
   // 获取SVG元素及其变换矩阵
