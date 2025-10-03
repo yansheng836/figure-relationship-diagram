@@ -41,7 +41,9 @@ index_fixed5-各模块分开.html：拆分css，js，data。
 
 6. 
 
+### 可用模板
 
+可用模板：index_fixed5-各模块分开.html+css+js+data，data可以参考 data/main-example.json 格式，让AI根据xx人物关系，写一个同格式的数据放进去。
 
 ## GitHub Page HTML访问路径
 
