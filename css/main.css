@@ -425,7 +425,7 @@ body {
 
   .sidebar.open {
     transform: translateX(0);
-    opacity: 0.8;
+    opacity: 0.85;
   }
 
   .sidebar-header {
@@ -480,8 +480,8 @@ body {
 
   /* 右侧 */
   .main-content {
-    /* 上右下左 */
-    margin: 10px 10px 20px 10px;
+    /* 上右下左，UC浏览器下面边框显示好像有点问题，显示不了下边框，自带华为浏览器不会 */
+    margin: 10px 10px 10px 10px;
   }
 
   svg {
@@ -497,7 +497,7 @@ body {
   /* 右下角图例 */
   .legend {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     right: 20px;
     background: rgba(255, 255, 255, 0.5);
     padding: 15px;
