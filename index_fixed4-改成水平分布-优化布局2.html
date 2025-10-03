@@ -2010,7 +2010,7 @@
                 selectedNode = defaultNode;
                 // 延迟执行以确保渲染完成
                 setTimeout(() => {
-                    focusOnNode(defaultNode);
+                    focusOnNodeBySearch(defaultNode);
                     highlightConnections(defaultNode);
                 }, 500);
             }
@@ -2064,26 +2064,26 @@
             treeLayout(root);
             
             // --- 这个逻辑块会在每次renderTree时执行 ---
-// --- 调试聚焦逻辑 ---
+    // --- 调试聚焦逻辑 ---
     console.log("renderTree: selectedNode is", selectedNode); // 调试1: 检查selectedNode
 
     // 在 renderTree() 函数中，找到这段代码并取消注释
-if (selectedNode) {
-    const targetDescendant = root.descendants().find(d => d.data.id === selectedNode.id);
-    
-    if (targetDescendant) {
-        const nodeX = targetDescendant.y - layoutWidth / 2 + 200;
-        const nodeY = targetDescendant.x - height / 2 + 50;
+    // if (selectedNode) {
+    //     const targetDescendant = root.descendants().find(d => d.data.id === selectedNode.id);
+        
+    //     if (targetDescendant) {
+    //         const nodeX = targetDescendant.y - layoutWidth / 2 + 200;
+    //         const nodeY = targetDescendant.x - height / 2 + 50;
 
-        const targetTransform = d3.zoomIdentity
-            .translate(width / 2 - nodeX, height / 2 - nodeY)
-            .scale(1.0);
+    //         const targetTransform = d3.zoomIdentity
+    //             .translate(width / 2 - nodeX, height / 2 - nodeY)
+    //             .scale(1.0);
 
-        svg.transition()
-            .duration(750)
-            .call(zoom.transform, targetTransform);
-    }
-}
+    //         svg.transition()
+    //             .duration(750)
+    //             .call(zoom.transform, targetTransform);
+    //     }
+    // }
 
     // --- 调试结束 ---
     // --- 聚焦逻辑结束 ---
@@ -2106,6 +2106,7 @@ if (selectedNode) {
                 .attr('class', 'node')
                 .attr('transform', d => `translate(${d.y - layoutWidth / 2 + 200}, ${d.x - height / 2 + 50})`) // 交换坐标
                 .on('click', handleNodeClick)
+                // .on('click', handleNodeHover)
                 .on('mouseenter', handleNodeHover)
                 .on('mouseleave', handleNodeLeave);
 
@@ -2191,10 +2192,17 @@ if (selectedNode) {
         }
 
         // 处理节点点击
-        function handleNodeClick(event, d) {
+// 处理节点点击 (保持不变)
+function handleNodeClick(event, d) {
             selectedNode = d.data;
-            renderTree();
+            renderTree(); // 重新渲染（只高亮，不居中）
             highlightConnections(d.data);
+            handleNodeHover(event, d); // 显示提示框
+            // 确保点击后关闭搜索结果框
+            document.getElementById('searchResults').classList.remove('active');
+            
+            const searchResults = document.getElementById('searchResults');
+            searchInput.value = '';
         }
 
 // 处理节点悬停
@@ -2202,6 +2210,9 @@ function handleNodeHover(event, d) {
     const tooltip = document.getElementById('tooltip');
     const mainContent = document.querySelector('.main-content');
     const mainContentRect = mainContent.getBoundingClientRect();
+    // 重置tooltip状态
+    tooltip.classList.remove('show');
+    tooltip.style.opacity = '0';
     
     // 设置提示框内容
     tooltip.querySelector('.tooltip-title').textContent = d.data.name;
@@ -2310,7 +2321,12 @@ function handleNodeHover(event, d) {
 
         // 处理节点离开
         function handleNodeLeave() {
-            document.getElementById('tooltip').classList.remove('show');
+            // document.getElementById('tooltip').classList.remove('show');
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+            tooltip.style.opacity = '0'; // 添加这行，确保opacity被重置
+            tooltip.style.left = ''; // 重置位置
+            tooltip.style.top = ''; // 重置位置
         }
 
         // 高亮连接
@@ -2360,10 +2376,33 @@ function handleNodeHover(event, d) {
                             // --- 关键修改 ---
                             // 重新渲染树形布局，这会触发我们之前修改过的聚焦逻辑
                             renderTree();
+                            highlightConnections(node);
                             // 点击后清理旧的提示框
-                            handleNodeLeave();
+                            // handleNodeLeave();
+                            // 2. 将节点放置到中央 (调用 focusOnNodeBySearch 来实现居中)
+                            focusOnNodeBySearch(node);
                             // 命中节点
-                            focusOnNode(node);
+                            // focusOnNodeBySearch(node);
+                       // 3. 显示该节点的提示信息 (手动模拟悬停事件，并延迟执行)
+// 由于居中动画需要 750ms，我们延迟 800ms 来确保在正确位置显示提示框
+                            setTimeout(() => {
+                                // 更精确地查找 DOM 元素：我们选择所有的 '.node' 元素，并使用 D3 的数据绑定过滤出 ID 匹配的那个
+                                const targetNodeElement = d3.selectAll('g.node').filter(function(d) {
+                                    // 检查当前绑定的数据 d 是否存在，并且 d.data.id 是否匹配我们搜索到的 node.id
+                                    return d && d.data && d.data.id === node.id;
+                                });
+                                
+                                // 检查是否成功找到元素
+                                if (!targetNodeElement.empty()) {
+                                    // 找到后，模拟 D3 事件对象
+                                    const mockD3Event = {
+                                        currentTarget: targetNodeElement.node(), // 必需：指向 DOM 元素
+                                        target: targetNodeElement.node(),
+                                    };
+                                    // 调用悬停处理函数来显示提示框，d 参数需要是一个包含数据的对象
+                                    handleNodeHover(mockD3Event, targetNodeElement.datum()); // 使用 targetNodeElement.datum() 获取 D3 绑定的数据
+                                }
+                            }, 800); // 延迟时间
                             
                             // --- 关键修改：在手机端时隐藏侧边栏 ---
                             // 检查窗口宽度是否小于768px（即手机端）
@@ -2397,6 +2436,20 @@ function handleNodeHover(event, d) {
 // 聚焦到节点
 // 聚焦到节点
 function focusOnNode(node) {
+            const width = document.getElementById('family-tree').clientWidth;
+            const height = document.getElementById('family-tree').clientHeight;
+            
+            const transform = d3.zoomIdentity
+                .translate(100, height / 2) // 调整聚焦位置
+                .scale(1);
+            
+            svg.transition()
+                .duration(750)
+                .call(d3.zoom().transform, transform);
+        }
+
+// 聚焦到节点
+function focusOnNodeBySearch(node) {
     if (!node) return;
     
     const width = document.getElementById('family-tree').clientWidth;
@@ -2553,6 +2606,7 @@ function focusOnNode(node) {
                     translate(${d.y}, 0)
                 `)
                 .on('click', handleNodeClick)
+                // .on('click', handleNodeHover)
                 .on('mouseenter', handleNodeHover)
                 .on('mouseleave', handleNodeLeave);
 
@@ -2615,6 +2669,7 @@ function focusOnNode(node) {
                     .on('drag', dragged)
                     .on('end', dragended))
                 .on('click', handleNodeClick)
+                // .on('click', handleNodeHover)
                 .on('mouseenter', handleNodeHover)
                 .on('mouseleave', handleNodeLeave);
 

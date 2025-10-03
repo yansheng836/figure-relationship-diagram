@@ -5,7 +5,7 @@ cp README.md README.md.backup.$(date +%Y%m%d%H%M%S)
 
 # 生成 TOC 内容
 str=''
-for i in `ls *.html 2>/dev/null`
+for i in `ls *.html | grep -v ' - 副本' 2>/dev/null`
 do   
     if [ -n "$str" ]; then
         str="$str\n"
