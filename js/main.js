@@ -214,7 +214,8 @@ function renderTree() {
 // 创建层次结构数据：不包含配偶
 function createHierarchy0() {
   // 找到根节点（第一代）
-  const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+  // const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+  const rootNodes = familyData.nodes.filter(n => n.id === 1);
 
   // 构建层次结构
   const buildChildren = (parentId) => {
@@ -238,7 +239,8 @@ function createHierarchy0() {
 // 创建层次结构数据：包含配偶，配偶也当做子节点
 function createHierarchy() {
   // 找到根节点（第一代）
-  const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+  // const rootNodes = familyData.nodes.filter(n => n.generation === 1);
+  const rootNodes = familyData.nodes.filter(n => n.id === 1);
 
   // 构建层次结构（包括配偶）
   const buildChildren = (parentId) => {
@@ -273,7 +275,6 @@ function createHierarchy() {
       return nodeData;
     });
   };
-
   // 处理根节点的配偶
   const rootSpouse = familyData.nodes.find(n =>
     n.spouse === rootNodes[0].id ||
