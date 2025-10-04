@@ -4,11 +4,13 @@
 
 ## 简介
 
-用了 [D3.js](https://github.com/d3/d3) 工具，参考了这个项目：<https://github.com/aelooee/red-dream-network-Tr>，效果：<https://aelooee.github.io/red-dream-network-Tr/>，但是这里用的是**力导向布局**，不是我想要的效果，然后就用**智谱清言**生成了一个，并不断优化。
+使用了 [D3.js](https://github.com/d3/d3) 工具，参考了这个项目：<https://github.com/aelooee/red-dream-network-Tr>，效果详见：<https://aelooee.github.io/red-dream-network-Tr/>，但是这里用的是**力导向布局**，不是我想要的效果，我想要是**树形布局**。
+
+AI时代，总不能我自己手动撸吧！于是就用**智谱清言**、**腾讯元宝**生成了一个，并不断优化。
 
 ## 具体功能
 
-### 优化效果和bug
+### 开发进度(优化效果)和bug
 
 index.html：基本框架（图+搜索功能）。
 
@@ -39,7 +41,7 @@ index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；�
 3. ~~搜索后，命中不了节点。~~
 4. ~~刚进页面时，设置把某个节点放中间。~~
 
-5. 手机端适配问题。
+5. 手机端部分UI适配问题。
 
 6. 
 
@@ -55,9 +57,9 @@ index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；�
 
 ![image-20251004000758322](README.assets/image-20251004000758322.png)
 
-## GitHub Page HTML访问路径
+## GitHub Page访问路径
 
-参考实例：
+参考示例：
 
 index3.html：<https://yansheng836.github.io/figure-relationship-diagram/index3.html>
 
