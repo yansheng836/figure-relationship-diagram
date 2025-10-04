@@ -30,7 +30,15 @@ index_fixed4-改成水平分布-优化布局.html：调整节点之间的距离�
 
 index_fixed4-改成水平分布-优化布局2.html：修复提示框位置；修复搜索命中节点，并居中；修复点击事件会移动的问题；修复重置按钮问题。
 
-index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；树形结构，添加配偶节点为第一个子节点（之前只有上下亲属关系）；
+index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；树形结构，添加配偶节点为第一个子节点（之前只有上下亲属关系）；优化手机端部分UI适配问题；通过URL传参数据文件，方便访问多个文件。
+
+带参数模式：
+
+不带参数：<https://yansheng836.github.io/figure-relationship-diagram/index_fixed5-各模块分开.html>
+
+带参数：<https://yansheng836.github.io/figure-relationship-diagram/index_fixed5-各模块分开.html?filename=main.json>
+
+带参数：<https://yansheng836.github.io/figure-relationship-diagram/index_fixed5-各模块分开.html?filename=main-example.json>
 
 ### 待处理问题
 
@@ -62,6 +70,8 @@ index_fixed5-各模块分开.html：拆分css，js，data；调整提示框；�
 参考示例：
 
 index3.html：<https://yansheng836.github.io/figure-relationship-diagram/index3.html>
+
+（以下链接内容在提交时根据脚本自动生成）
 
 ---
 

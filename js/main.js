@@ -3,9 +3,21 @@
 
 // 异步加载数据
 async function loadData() {
+  // 兼容处理：1.如果URL中指定了文件路径，用这个数据文件；如果没有指定，用默认的
+  // 获取URL中的参数
+  // 假设当前 URL 为: http://127.0.0.1:5500/index_fixed5-%E5%90%84%E6%A8%A1%E5%9D%97%E5%88%86%E5%BC%80.html?filename=main-example.json
+  const params = new URLSearchParams(window.location.search);
+  url_filename = params.get('filename')
+  // console.log("url_filename:"+url_filename); // 输出: main-example.json
+  // filename = './data/main-example.json'
+  filename = './data/main.json'
+  if (url_filename != null) {
+    filename = './data/' + url_filename
+  }
+
   try {
     // const response = await fetch('./data/main-example.json');
-    const response = await fetch('./data/main.json');
+    const response = await fetch(filename);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -106,7 +118,7 @@ function renderTree() {
 
   // --- 这个逻辑块会在每次renderTree时执行 ---
   // --- 调试聚焦逻辑 ---
-  console.log("renderTree: selectedNode is", selectedNode); // 调试1: 检查selectedNode
+  // console.log("renderTree: selectedNode is", selectedNode); // 调试1: 检查selectedNode
 
   // 在 renderTree() 函数中，找到这段代码并取消注释
   // if (selectedNode) {
@@ -236,9 +248,9 @@ function createHierarchy() {
 
     return children.map(child => {
       // 查找配偶节点
-      const spouse = familyData.nodes.find(n => 
-        n.spouse === child.id || 
-        familyData.links.some(l => 
+      const spouse = familyData.nodes.find(n =>
+        n.spouse === child.id ||
+        familyData.links.some(l =>
           (l.source === child.id && l.target === n.id && l.type === 'spouse') ||
           (l.target === child.id && l.source === n.id && l.type === 'spouse')
         )
@@ -263,9 +275,9 @@ function createHierarchy() {
   };
 
   // 处理根节点的配偶
-  const rootSpouse = familyData.nodes.find(n => 
-    n.spouse === rootNodes[0].id || 
-    familyData.links.some(l => 
+  const rootSpouse = familyData.nodes.find(n =>
+    n.spouse === rootNodes[0].id ||
+    familyData.links.some(l =>
       (l.source === rootNodes[0].id && l.target === n.id && l.type === 'spouse') ||
       (l.target === rootNodes[0].id && l.source === n.id && l.type === 'spouse')
     )
@@ -273,7 +285,7 @@ function createHierarchy() {
 
   // 构建根节点的子节点数组
   const rootChildren = buildChildren(rootNodes[0].id);
-  
+
   // 如果有配偶，添加为第一个子节点
   if (rootSpouse) {
     rootChildren.unshift({
@@ -323,13 +335,13 @@ function handleNodeHover(event, d) {
 
   // 设置提示框内容
   tooltip.querySelector('.tooltip-title').textContent = d.data.name;
-  
-//   tooltip.querySelector('.tooltip-info').innerHTML = `
-//     <div>出生年份: ${d.data.birth || '未知'}</div>
-//     ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
-//     <div>职业: ${d.data.occupation || '未知'}</div>
-//     <div>第${d.data.generation}代</div>
-// `;
+
+  //   tooltip.querySelector('.tooltip-info').innerHTML = `
+  //     <div>出生年份: ${d.data.birth || '未知'}</div>
+  //     ${d.data.death ? `<div>逝世年份: ${d.data.death}</div>` : ''}
+  //     <div>职业: ${d.data.occupation || '未知'}</div>
+  //     <div>第${d.data.generation}代</div>
+  // `;
   tooltip.querySelector('.tooltip-info').innerHTML = `
     <div>世代：第${d.data.generation}代</div>
     ${d.data.birth ? `<div>出生年份: ${d.data.birth}</div>` : ''}
